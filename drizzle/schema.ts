@@ -12,35 +12,4 @@ export * from './supplier_orders.schema';
 export * from './suppliers.schema';
 export * from './user_addresses.schema';
 export * from './users.schema';
-export * from './enums'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-     
-     
- 
+export * from './enums';
