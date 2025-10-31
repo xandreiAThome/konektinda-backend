@@ -1,6 +1,6 @@
 import { integer, pgTable, decimal } from 'drizzle-orm/pg-core';
-import { supplier_orders } from './supplier_orders.schema';
-import { product_variants } from './product_variants.schema';
+import { supplier_orders } from '../suppliers/supplier_orders.schema';
+import { product_variants } from '../products/product_variants.schema';
 
 export const order_items = pgTable('order_items', {
   order_item_id: integer('order_item_id')

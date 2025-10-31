@@ -1,5 +1,5 @@
 import { integer, pgTable } from 'drizzle-orm/pg-core';
-import { users } from './users.schema';
+import { users } from '../users/users.schema';
 
 export const carts = pgTable('carts', {
   cart_id: integer('cart_id').primaryKey().generatedAlwaysAsIdentity(),

@@ -5,8 +5,8 @@ import {
   decimal,
   timestamp,
 } from 'drizzle-orm/pg-core';
-import { users } from './users.schema';
-import { payments } from './payments.schema';
+import { users } from '../users/users.schema';
+import { payments } from '../payments/payments.schema';
 
 export const orders = pgTable('orders', {
   order_id: integer('order_id').primaryKey().generatedAlwaysAsIdentity(),

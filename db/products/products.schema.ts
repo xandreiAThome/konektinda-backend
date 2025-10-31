@@ -1,6 +1,6 @@
 import { integer, varchar, pgTable, boolean } from 'drizzle-orm/pg-core';
 import { product_categories } from './product_categories.schema';
-import { suppliers } from './suppliers.schema';
+import { suppliers } from '../suppliers/suppliers.schema';
 
 export const products = pgTable('products', {
   product_id: integer('product_id').primaryKey().generatedAlwaysAsIdentity(),

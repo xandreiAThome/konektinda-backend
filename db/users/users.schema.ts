@@ -1,12 +1,6 @@
-import {
-  integer,
-  pgTable,
-  varchar,
-  boolean,
-  pgEnum,
-} from 'drizzle-orm/pg-core';
-import { suppliers } from './suppliers.schema';
-import { userRoles } from './enums';
+import { integer, pgTable, varchar, boolean } from 'drizzle-orm/pg-core';
+import { suppliers } from '../suppliers/suppliers.schema';
+import { userRoles } from '../enums';
 
 export const users = pgTable('users', {
   user_id: integer('user_id').primaryKey().generatedAlwaysAsIdentity(),

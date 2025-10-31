@@ -1,5 +1,5 @@
 import { pgTable, varchar, decimal, timestamp } from 'drizzle-orm/pg-core';
-import { paymentTypes, paymentStatuses } from './enums';
+import { paymentTypes, paymentStatuses } from '../enums';
 
 export const payments = pgTable('payments', {
   ref_num: varchar('ref_num', { length: 100 }).primaryKey(),
