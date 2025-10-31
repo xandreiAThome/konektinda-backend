@@ -1,6 +1,6 @@
 import { integer, pgTable, varchar, timestamp } from 'drizzle-orm/pg-core';
 import { couriers } from '../couriers/couriers.schema';
-import { supplier_orders } from '../suppliers/supplier_orders.schema';
+import { supplier_orders } from '../orders/supplier_orders.schema';
 
 export const shipments = pgTable('shipments', {
   shipment_id: integer('shipment_id').primaryKey().generatedAlwaysAsIdentity(),

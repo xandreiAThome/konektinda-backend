@@ -1,6 +1,6 @@
 import { integer, pgTable, varchar, decimal } from 'drizzle-orm/pg-core';
-import { suppliers } from './suppliers.schema';
-import { orders } from '../orders/orders.schema';
+import { suppliers } from '../suppliers/suppliers.schema';
+import { orders } from './orders.schema';
 import { orderStatuses } from '../enums';
 
 export const supplier_orders = pgTable('supplier_orders', {

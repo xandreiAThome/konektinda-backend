@@ -8,7 +8,7 @@ export * from './products/product_categories.schema';
 export * from './products/product_variants.schema';
 export * from './products/products.schema';
 export * from './shipments/shipments.schema';
-export * from './suppliers/supplier_orders.schema';
+export * from './orders/supplier_orders.schema';
 export * from './suppliers/suppliers.schema';
 export * from './users/user_addresses.schema';
 export * from './users/users.schema';
