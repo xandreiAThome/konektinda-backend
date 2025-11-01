@@ -14,7 +14,7 @@ export class CreateProductsDto {
   @IsOptional()
   @IsString()
   @MaxLength(255)
-  product_description?: string;
+  product_description?: string | null | undefined;
 
   @IsOptional()
   @IsBoolean()

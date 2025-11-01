@@ -1,4 +1,3 @@
-// src/products/products.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { CreateProductsDto } from './dto/createproducts.dto';

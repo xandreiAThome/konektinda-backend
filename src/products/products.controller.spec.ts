@@ -1,3 +1,4 @@
+// src/products/products.controller.spec.ts
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProductsController } from './products.controller';
 import { ProductsService } from './products.service';
@@ -7,6 +8,7 @@ describe('ProductsController', () => {
   let controller: ProductsController;
   let service: ProductsService;
 
+  // Mock all service methods
   const mockProductsService = {
     getAllProducts: jest.fn(),
     getSingleProduct: jest.fn(),
@@ -23,7 +25,8 @@ describe('ProductsController', () => {
 
     controller = module.get<ProductsController>(ProductsController);
     service = module.get<ProductsService>(ProductsService);
-    jest.clearAllMocks();
+
+    jest.clearAllMocks(); // reset mocks before each test
   });
 
   it('should be defined', () => {
@@ -31,49 +34,63 @@ describe('ProductsController', () => {
   });
 
   describe('getAllProducts', () => {
-    it('should return all products', async () => {
-      const result = [{ product_id: 1, product_name: 'Test' }];
-      mockProductsService.getAllProducts.mockResolvedValue(result);
+    it('should return an array of products', async () => {
+      const products = [{ product_id: 1, product_name: 'Test Product' }];
+      mockProductsService.getAllProducts.mockResolvedValue(products);
 
-      expect(await controller.getAllProducts()).toBe(result);
+      const result = await controller.getAllProducts();
+      expect(result).toBe(products);
       expect(mockProductsService.getAllProducts).toHaveBeenCalled();
     });
   });
 
   describe('getSingleProduct', () => {
-    it('should return a single product by id', async () => {
-      const result = { product_id: 1, product_name: 'Single' };
-      mockProductsService.getSingleProduct.mockResolvedValue(result);
+    it('should return a product by id', async () => {
+      const product = { product_id: 1, product_name: 'Single Product' };
+      mockProductsService.getSingleProduct.mockResolvedValue(product);
 
-      expect(await controller.getSingleProduct(1)).toBe(result);
+      const result = await controller.getSingleProduct(1);
+      expect(result).toBe(product);
       expect(mockProductsService.getSingleProduct).toHaveBeenCalledWith(1);
     });
 
-    it('should throw NotFoundException if product does not exist', async () => {
+    it('should throw NotFoundException if product not found', async () => {
       mockProductsService.getSingleProduct.mockRejectedValue(new NotFoundException());
+
       await expect(controller.getSingleProduct(999)).rejects.toThrow(NotFoundException);
+      expect(mockProductsService.getSingleProduct).toHaveBeenCalledWith(999);
     });
   });
 
   describe('createProduct', () => {
     it('should create and return a product', async () => {
-      const dto = { product_category_id: 1, supplier_id: 2, product_name: 'New' };
-      const result = { product_id: 1, ...dto, product_description: '', is_active: true };
-      mockProductsService.createProduct.mockResolvedValue(result);
+      const dto = { product_category_id: 1, supplier_id: 2, product_name: 'New Product' };
+      const createdProduct = { product_id: 1, ...dto, product_description: '', is_active: true };
+      mockProductsService.createProduct.mockResolvedValue(createdProduct);
 
-      expect(await controller.createProduct(dto)).toBe(result);
+      const result = await controller.createProduct(dto);
+      expect(result).toBe(createdProduct);
       expect(mockProductsService.createProduct).toHaveBeenCalledWith(dto);
     });
   });
 
   describe('updateProduct', () => {
     it('should update and return a product', async () => {
-      const dto = { product_name: 'Updated' };
-      const result = { product_id: 1, product_name: 'Updated' };
-      mockProductsService.updateProduct.mockResolvedValue(result);
+      const dto = { product_name: 'Updated Name' };
+      const updatedProduct = { product_id: 1, product_name: 'Updated Name' };
+      mockProductsService.updateProduct.mockResolvedValue(updatedProduct);
 
-      expect(await controller.updateProduct(1, dto)).toBe(result);
+      const result = await controller.updateProduct(1, dto);
+      expect(result).toBe(updatedProduct);
       expect(mockProductsService.updateProduct).toHaveBeenCalledWith(1, dto);
+    });
+
+    it('should throw NotFoundException if product not found', async () => {
+      const dto = { product_name: 'Updated Name' };
+      mockProductsService.updateProduct.mockRejectedValue(new NotFoundException());
+
+      await expect(controller.updateProduct(999, dto)).rejects.toThrow(NotFoundException);
+      expect(mockProductsService.updateProduct).toHaveBeenCalledWith(999, dto);
     });
   });
 
@@ -81,13 +98,16 @@ describe('ProductsController', () => {
     it('should delete a product', async () => {
       mockProductsService.deleteProduct.mockResolvedValue(undefined);
 
-      expect(await controller.deleteProduct(1)).toBeUndefined();
+      const result = await controller.deleteProduct(1);
+      expect(result).toBeUndefined();
       expect(mockProductsService.deleteProduct).toHaveBeenCalledWith(1);
     });
 
-    it('should throw NotFoundException if product does not exist', async () => {
+    it('should throw NotFoundException if product not found', async () => {
       mockProductsService.deleteProduct.mockRejectedValue(new NotFoundException());
+
       await expect(controller.deleteProduct(999)).rejects.toThrow(NotFoundException);
+      expect(mockProductsService.deleteProduct).toHaveBeenCalledWith(999);
     });
   });
 });
