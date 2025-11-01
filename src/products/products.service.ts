@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { CreateProductsDto } from './dto/createproducts.dto';
 import { UpdateProductsDto } from './dto/updateprodcuts.dto';
-import { Product } from 'interface/product';
+import { Product } from 'interface/products';
 import { products } from 'db/schema';
 import { db } from 'database';
 
