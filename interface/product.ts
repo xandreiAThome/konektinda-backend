@@ -3,6 +3,6 @@ export interface Product {
     product_category_id: number;
     supplier_id: number;
     product_name: string;
-    product_description: string;
+    product_description?: string | null;
     is_active: boolean;
 }

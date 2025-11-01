@@ -20,32 +20,32 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Get()
-  getAllProducts(): Product[] {
+  getAllProducts(): Promise<Product[]> {
     return this.productsService.getAllProducts();
   }
 
   @Get(':id')
-  getSingleProduct(@Param('id', ParseIntPipe) id: number): Product {
+  getSingleProduct(@Param('id', ParseIntPipe) id: number): Promise<Product> {
     return this.productsService.getSingleProduct(id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  createProduct(@Body() createProductDto: CreateProductsDto): Product {
-    return this.productsService.createProduct(createProductDto);
+  createProduct(@Body() dto: CreateProductsDto): Promise<Product> {
+    return this.productsService.createProduct(dto);
   }
 
   @Put(':id')
   updateProduct(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateProductDto: UpdateProductsDto,
-  ): Product {
-    return this.productsService.updateProduct(id, updateProductDto);
+    @Body() dto: UpdateProductsDto,
+  ): Promise<Product> {
+    return this.productsService.updateProduct(id, dto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteProduct(@Param('id', ParseIntPipe) id: number): void {
-    this.productsService.deleteProduct(id);
+  deleteProduct(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.productsService.deleteProduct(id);
   }
 }

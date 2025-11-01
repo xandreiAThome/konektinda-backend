@@ -1,22 +1,22 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsInt, IsString, IsBoolean, IsOptional, MaxLength } from 'class-validator';
 
 export class CreateProductsDto {
+  @IsInt()
+  product_category_id: number;
 
-    @IsNumber()
-    @IsNotEmpty()
-    product_category_id: number;
+  @IsInt()
+  supplier_id: number;
 
-    @IsNumber()
-    @IsNotEmpty()
-    supplier_id: number;
+  @IsString()
+  @MaxLength(100)
+  product_name: string;
 
-    @IsString()
-    @IsNotEmpty()
-    product_name: string;
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  product_description?: string;
 
-    @IsString()
-    product_description: string;
-
-    @IsBoolean()
-    is_active: boolean;
+  @IsOptional()
+  @IsBoolean()
+  is_active?: boolean; 
 }
