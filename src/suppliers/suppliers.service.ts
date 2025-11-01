@@ -1,15 +1,64 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { db } from 'database';
+import { suppliers } from 'db/schema';
+import { eq } from 'drizzle-orm';
+import { Supplier } from 'interface/suppliers';
+import { CreateSupplierDto } from './dto/createsupplier.dto';
+import { UpdateSupplierDto } from './dto/udpatesupplier.dto';
 
 @Injectable()
 export class SuppliersService {
-    async getAllSuppliers() {}
+  async getAllSuppliers(): Promise<Supplier[]> {
+    return db.select().from(suppliers);
+  }
 
-    async getSupplierById(id: number) {}
+  async getSupplierById(id: number): Promise<Supplier> {
+    const [supplier] = await db
+      .select()
+      .from(suppliers)
+      .where(eq(suppliers.supplier_id, id));
 
-    async createSupplier(supplierData: any) {}
+    if (!supplier) {
+      throw new NotFoundException(`Supplier with ID ${id} not found`);
+    }
 
-    async updateSupplier(id: number, supplierData: any) {}
+    return supplier;
+  }
 
-    async deleteSupplier(id: number) {}
-    
+  async createSupplier(dto: CreateSupplierDto): Promise<Supplier> {
+    const [supplier] = await db
+      .insert(suppliers)
+      .values({
+        supplier_name: dto.supplier_name,
+        supplier_description: dto.supplier_description,
+      })
+      .returning();
+
+    return supplier;
+  }
+
+  async updateSupplier(id: number, supplierData: UpdateSupplierDto): Promise<Supplier> {
+    const [supplier] = await db
+      .update(suppliers)
+      .set(supplierData)
+      .where(eq(suppliers.supplier_id, id))
+      .returning();
+
+    if (!supplier) {
+      throw new NotFoundException(`Supplier with ID ${id} not found`);
+    }
+
+    return supplier;
+  }
+
+  async deleteSupplier(id: number) {
+    const [deleted] = await db
+      .delete(suppliers)
+      .where(eq(suppliers.supplier_id, id))
+      .returning();
+
+    if (!deleted) {
+      throw new NotFoundException(`Supplier with ID ${id} not found`);
+    }
+  }
 }
