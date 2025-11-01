@@ -1,52 +1,93 @@
-// src/products/products.controller.ts
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Param,
-  Body,
-  ParseIntPipe,
-  HttpCode,
-  HttpStatus,
-} from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { ProductsController } from './products.controller';
 import { ProductsService } from './products.service';
-import type { CreateProductsDto } from './dto/createproducts.dto';
-import type { UpdateProductsDto } from './dto/updateprodcuts.dto';
-import type { Product } from 'interface/product';
+import { NotFoundException } from '@nestjs/common';
 
-@Controller('products')
-export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+describe('ProductsController', () => {
+  let controller: ProductsController;
+  let service: ProductsService;
 
-  @Get()
-  getAllProducts(): Promise<Product[]> {
-    return this.productsService.getAllProducts();
-  }
+  const mockProductsService = {
+    getAllProducts: jest.fn(),
+    getSingleProduct: jest.fn(),
+    createProduct: jest.fn(),
+    updateProduct: jest.fn(),
+    deleteProduct: jest.fn(),
+  };
 
-  @Get(':id')
-  getSingleProduct(@Param('id', ParseIntPipe) id: number): Promise<Product> {
-    return this.productsService.getSingleProduct(id);
-  }
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [ProductsController],
+      providers: [{ provide: ProductsService, useValue: mockProductsService }],
+    }).compile();
 
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
-  createProduct(@Body() dto: CreateProductsDto): Promise<Product> {
-    return this.productsService.createProduct(dto);
-  }
+    controller = module.get<ProductsController>(ProductsController);
+    service = module.get<ProductsService>(ProductsService);
+    jest.clearAllMocks();
+  });
 
-  @Put(':id')
-  updateProduct(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() dto: UpdateProductsDto,
-  ): Promise<Product> {
-    return this.productsService.updateProduct(id, dto);
-  }
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
 
-  @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  deleteProduct(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.productsService.deleteProduct(id);
-  }
-}
+  describe('getAllProducts', () => {
+    it('should return all products', async () => {
+      const result = [{ product_id: 1, product_name: 'Test' }];
+      mockProductsService.getAllProducts.mockResolvedValue(result);
+
+      expect(await controller.getAllProducts()).toBe(result);
+      expect(mockProductsService.getAllProducts).toHaveBeenCalled();
+    });
+  });
+
+  describe('getSingleProduct', () => {
+    it('should return a single product by id', async () => {
+      const result = { product_id: 1, product_name: 'Single' };
+      mockProductsService.getSingleProduct.mockResolvedValue(result);
+
+      expect(await controller.getSingleProduct(1)).toBe(result);
+      expect(mockProductsService.getSingleProduct).toHaveBeenCalledWith(1);
+    });
+
+    it('should throw NotFoundException if product does not exist', async () => {
+      mockProductsService.getSingleProduct.mockRejectedValue(new NotFoundException());
+      await expect(controller.getSingleProduct(999)).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('createProduct', () => {
+    it('should create and return a product', async () => {
+      const dto = { product_category_id: 1, supplier_id: 2, product_name: 'New' };
+      const result = { product_id: 1, ...dto, product_description: '', is_active: true };
+      mockProductsService.createProduct.mockResolvedValue(result);
+
+      expect(await controller.createProduct(dto)).toBe(result);
+      expect(mockProductsService.createProduct).toHaveBeenCalledWith(dto);
+    });
+  });
+
+  describe('updateProduct', () => {
+    it('should update and return a product', async () => {
+      const dto = { product_name: 'Updated' };
+      const result = { product_id: 1, product_name: 'Updated' };
+      mockProductsService.updateProduct.mockResolvedValue(result);
+
+      expect(await controller.updateProduct(1, dto)).toBe(result);
+      expect(mockProductsService.updateProduct).toHaveBeenCalledWith(1, dto);
+    });
+  });
+
+  describe('deleteProduct', () => {
+    it('should delete a product', async () => {
+      mockProductsService.deleteProduct.mockResolvedValue(undefined);
+
+      expect(await controller.deleteProduct(1)).toBeUndefined();
+      expect(mockProductsService.deleteProduct).toHaveBeenCalledWith(1);
+    });
+
+    it('should throw NotFoundException if product does not exist', async () => {
+      mockProductsService.deleteProduct.mockRejectedValue(new NotFoundException());
+      await expect(controller.deleteProduct(999)).rejects.toThrow(NotFoundException);
+    });
+  });
+});
