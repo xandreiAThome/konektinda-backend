@@ -1,36 +1,44 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { FirebaseService } from 'src/firebase/firebase.service';
+import { FirebaseService } from '../firebase/firebase.service';
 import { UsersService } from 'src/user/user.service';
+import { NewUser } from 'db/schema';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly firebaseService: FirebaseService,
     private readonly usersService: UsersService,
+    private readonly firebaseService: FirebaseService,
   ) {}
 
-  async verifyToken(idToken: string) {
+  async verifyFirebaseToken(idToken: string) {
     try {
-      const decodedToken = await this.firebaseService
-        .getAuth()
-        .verifyIdToken(idToken);
-
-      const { uid, email, name, picture } = decodedToken;
-
-      let user = await this.usersService.findByUid(uid);
-      if (!user) {
-        user = await this.usersService.create({
-          uid,
-          email,
-          name,
-          photoUrl: picture,
-        });
-      }
-
-      return { message: 'Authenticated successfully', user };
-    } catch (error) {
-      console.error('AuthService.verifyToken Error:', error);
-      throw new UnauthorizedException('Invalid Firebase ID token');
+      const auth = this.firebaseService.getAuth();
+      const decoded = await auth.verifyIdToken(idToken);
+      return decoded;
+    } catch (err) {
+      throw new UnauthorizedException('Invalid Firebase token');
     }
+  }
+
+  async registerWithFirebase(decodedToken: any) {
+    const { uid, email, name, picture } = decodedToken;
+
+    // Check if user already exists in DB
+    const existingUser = await this.usersService.findByEmail(email);
+    if (existingUser) return existingUser;
+
+    const newUser: NewUser = {
+      first_name: name?.split(' ')[0] || 'User',
+      last_name: name?.split(' ')[1] || '',
+      email,
+      username: email.split('@')[0],
+      password_hash: '', // handled by Firebase
+      phone_number: '',
+      email_verified: true,
+      role: 'CONSUMER',
+      profile_picture_url: picture || '',
+    };
+
+    return this.usersService.createUser(newUser);
   }
 }

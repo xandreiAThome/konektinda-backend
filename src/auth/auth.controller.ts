@@ -5,11 +5,10 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('login')
-  async login(@Body('idToken') idToken: string) {
-    if (!idToken) {
-      throw new Error('idToken is required');
-    }
-    return this.authService.verifyToken(idToken);
+  @Post('firebase-login')
+  async firebaseLogin(@Body('idToken') idToken: string) {
+    const decodedToken = await this.authService.verifyFirebaseToken(idToken);
+    const user = await this.authService.registerWithFirebase(decodedToken);
+    return { message: 'Authenticated successfully', user };
   }
 }
