@@ -7,6 +7,8 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
+        console.log('✅ Firebase initialized for project:', process.env.FIREBASE_PROJECT_ID);
+
   await app.listen(process.env.PORT ?? 4000);
 }
 bootstrap();
