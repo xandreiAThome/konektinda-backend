@@ -5,10 +5,10 @@ import { SuppliersModule } from './suppliers/suppliers.module';
 import { ProductsModule } from './products/products.module';
 import { FirebaseModule } from './firebase/firebase.module';
 import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
+import { UsersModule } from './user/users.module';
 
 @Module({
-  imports: [SuppliersModule, ProductsModule, FirebaseModule, AuthModule, UserModule],
+  imports: [SuppliersModule, ProductsModule, FirebaseModule, AuthModule, UsersModule],
   controllers: [AppController],
   providers: [AppService],
 })
