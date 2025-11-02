@@ -5,7 +5,7 @@ import { SuppliersModule } from './suppliers/suppliers.module';
 import { ProductsModule } from './products/products.module';
 import { FirebaseModule } from './firebase/firebase.module';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './user/users.module';
+import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({

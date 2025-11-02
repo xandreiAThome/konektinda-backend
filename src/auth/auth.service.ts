@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { FirebaseService } from '../firebase/firebase.service';
-import { UsersService } from 'src/user/users.service';
+import { UsersService } from 'src/users/users.service';
 import { NewUser } from 'db/schema';
 
 @Injectable()
@@ -32,7 +32,7 @@ export class AuthService {
       last_name: name?.split(' ')[1] || '',
       email,
       username: email.split('@')[0],
-      password_hash: '', // handled by Firebase
+      password_hash: '',
       phone_number: '',
       email_verified: true,
       role: 'CONSUMER',

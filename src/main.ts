@@ -5,9 +5,8 @@ import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-
-        console.log('✅ Firebase initialized for project:', process.env.FIREBASE_PROJECT_ID);
 
   await app.listen(process.env.PORT ?? 4000);
 }
