@@ -1,6 +1,7 @@
 import { integer, varchar, pgTable, boolean } from 'drizzle-orm/pg-core';
 import { product_categories } from './product_categories.schema';
 import { suppliers } from '../suppliers/suppliers.schema';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 
 export const products = pgTable('products', {
   product_id: integer('product_id').primaryKey().generatedAlwaysAsIdentity(),
@@ -14,3 +15,6 @@ export const products = pgTable('products', {
   product_description: varchar('product_description', { length: 255 }),
   is_active: boolean('is_active').notNull().default(true),
 });
+
+export type Product = InferSelectModel<typeof products>;
+export type NewProduct = InferInsertModel<typeof products>;

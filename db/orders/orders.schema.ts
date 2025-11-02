@@ -7,6 +7,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { users } from '../users/users.schema';
 import { payments } from '../payments/payments.schema';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 
 export const orders = pgTable('orders', {
   order_id: integer('order_id').primaryKey().generatedAlwaysAsIdentity(),
@@ -25,3 +26,6 @@ export const orders = pgTable('orders', {
     .unique(),
   order_date: timestamp('order_date').notNull().defaultNow(),
 });
+
+export type Order = InferSelectModel<typeof orders>;
+export type NewOrder = InferInsertModel<typeof orders>;

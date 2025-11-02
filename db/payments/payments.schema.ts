@@ -1,5 +1,6 @@
 import { pgTable, varchar, decimal, timestamp } from 'drizzle-orm/pg-core';
 import { paymentTypes, paymentStatuses } from '../enums';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 
 export const payments = pgTable('payments', {
   ref_num: varchar('ref_num', { length: 100 }).primaryKey(),
@@ -9,3 +10,6 @@ export const payments = pgTable('payments', {
   amount: decimal('amount', { precision: 10, scale: 2 }).notNull(),
   payment_date: timestamp('payment_date').notNull().defaultNow(),
 });
+
+export type Payment = InferSelectModel<typeof payments>;
+export type NewPayment = InferInsertModel<typeof payments>;

@@ -1,5 +1,6 @@
 import { integer, varchar, pgTable } from 'drizzle-orm/pg-core';
 import { users } from './users.schema';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 
 export const user_addresses = pgTable('user_addresses', {
   address_id: integer('address_id').primaryKey().generatedAlwaysAsIdentity(),
@@ -12,3 +13,7 @@ export const user_addresses = pgTable('user_addresses', {
   barangay: varchar('barangay', { length: 50 }).notNull(),
   zip_code: varchar('zip_code', { length: 10 }).notNull(),
 });
+
+export type UserAddress = InferSelectModel<typeof user_addresses>;
+export type NewUserAddress = InferInsertModel<typeof user_addresses>;
+

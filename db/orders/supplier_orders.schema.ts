@@ -2,6 +2,7 @@ import { integer, pgTable, varchar, decimal } from 'drizzle-orm/pg-core';
 import { suppliers } from '../suppliers/suppliers.schema';
 import { orders } from './orders.schema';
 import { orderStatuses } from '../enums';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 
 export const supplier_orders = pgTable('supplier_orders', {
   supplier_order_id: integer('supplier_order_id')
@@ -21,3 +22,6 @@ export const supplier_orders = pgTable('supplier_orders', {
   total_price: decimal('total_price', { precision: 10, scale: 2 }).notNull(),
   status: orderStatuses().notNull().default('PENDING'),
 });
+
+export type SupplierOrder = InferSelectModel<typeof supplier_orders>;
+export type NewSupplierOrder = InferInsertModel<typeof supplier_orders>;

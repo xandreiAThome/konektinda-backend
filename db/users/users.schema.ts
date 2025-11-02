@@ -1,6 +1,7 @@
 import { integer, pgTable, varchar, boolean } from 'drizzle-orm/pg-core';
 import { suppliers } from '../suppliers/suppliers.schema';
 import { userRoles } from '../enums';
+import { InferSelectModel, InferInsertModel } from 'drizzle-orm';
 
 export const users = pgTable('users', {
   user_id: integer('user_id').primaryKey().generatedAlwaysAsIdentity(),
@@ -17,3 +18,7 @@ export const users = pgTable('users', {
   ),
   supplier_id: integer('supplier_id').references(() => suppliers.supplier_id),
 });
+
+export type User = InferSelectModel<typeof users>;
+export type NewUser = InferInsertModel<typeof users>;
+

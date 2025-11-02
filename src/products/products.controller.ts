@@ -13,7 +13,7 @@ import {
 import { ProductsService } from './products.service';
 import type { CreateProductsDto } from './dto/createproducts.dto';
 import type { UpdateProductsDto } from './dto/updateprodcuts.dto';
-import type { Product } from 'interface/products';
+import { Product } from 'db/schema';
 
 @Controller('products')
 export class ProductsController {
