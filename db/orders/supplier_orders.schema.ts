@@ -16,8 +16,8 @@ export const supplier_orders = pgTable('supplier_orders', {
   supplier_order_num: varchar('supplier_order_number', { length: 50 })
     .notNull()
     .unique(),
-  subtotal: decimal('subtotal', { precision: 10, scale: 2 }).notNull(),
-  shipping: decimal('shipping_fee', { precision: 10, scale: 2 }).notNull(),
-  total_price: decimal('total_price', { precision: 10, scale: 2 }).notNull(),
+  subtotal: decimal('subtotal', { precision: 10, scale: 2, mode: 'number' }).notNull(),
+  shipping: decimal('shipping_fee', { precision: 10, scale: 2, mode: 'number' }).notNull(),
+  total_price: decimal('total_price', { precision: 10, scale: 2, mode: 'number' }).notNull(),
   status: orderStatuses().notNull().default('PENDING'),
 });

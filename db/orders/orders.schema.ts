@@ -13,7 +13,7 @@ export const orders = pgTable('orders', {
   user_id: integer('user_id')
     .references(() => users.user_id)
     .notNull(),
-  grand_total: decimal('grand_total', { precision: 10, scale: 2 }).notNull(), // Calculated from all supplier orders
+  grand_total: decimal('grand_total', { precision: 10, scale: 2, mode: 'number' }).notNull(), // Calculated from all supplier orders
   region: varchar('region', { length: 50 }).notNull(),
   province: varchar('province', { length: 50 }).notNull(),
   city: varchar('city', { length: 50 }).notNull(),
