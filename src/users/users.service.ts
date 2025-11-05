@@ -18,4 +18,9 @@ export class UsersService {
   async findAll(): Promise<User[]> {
     return db.select().from(users);
   }
+
+  async findById(id: number): Promise<User> {
+    const results = await db.select().from(users).where(eq(users.user_id, id));
+    return results[0];
+  }
 }
