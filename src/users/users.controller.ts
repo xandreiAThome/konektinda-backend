@@ -1,64 +1,26 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { UsersController } from './users.controller';
+import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { FirebaseAuthGuard } from 'src/auth/guard/firebase-auth-guard';
 
-describe('UsersController', () => {
-  let controller: UsersController;
-  let usersService: UsersService;
+@Controller('users')
+@UseGuards(FirebaseAuthGuard)
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
 
-  const mockUser = {
-    user_id: 1,
-    email: 'test@example.com',
-    first_name: 'John',
-    last_name: 'Doe',
-  };
+  @Get()
+  async getAllUsers() {
+    return this.usersService.findAll();
+  }
 
-  const mockUsersService = {
-    findAll: jest.fn().mockResolvedValue([mockUser]),
-    findById: jest.fn().mockResolvedValue(mockUser),
-  };
+  @Get("Me")
+  async getMe(@Req() req){
+    const user = req.user;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [UsersController],
-      providers: [
-        { provide: UsersService, useValue: mockUsersService },
-      ],
-    })
-      // 👇 override the guard so it doesn't block our tests
-      .overrideGuard(FirebaseAuthGuard)
-      .useValue({ canActivate: jest.fn().mockReturnValue(true) })
-      .compile();
+    return user;
+  }
 
-    controller = module.get<UsersController>(UsersController);
-    usersService = module.get<UsersService>(UsersService);
-
-    jest.clearAllMocks();
-  });
-
-  // 🧪 getAllUsers()
-  it('should return all users', async () => {
-    const result = await controller.getAllUsers();
-
-    expect(usersService.findAll).toHaveBeenCalled();
-    expect(result).toEqual([mockUser]);
-  });
-
-  // 🧪 getMe()
-  it('should return the current user from the request', async () => {
-    const req = { user: mockUser };
-
-    const result = await controller.getMe(req);
-
-    expect(result).toEqual(mockUser);
-  });
-
-  // 🧪 getUserById()
-  it('should return a user by ID', async () => {
-    const result = await controller.getUserById('1');
-
-    expect(usersService.findById).toHaveBeenCalledWith(1);
-    expect(result).toEqual(mockUser);
-  });
-});
+  @Get(":id")
+  async getUserById(@Param("id") id: string) {
+    return this.usersService.findById(Number(id));
+  }
+}
