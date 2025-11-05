@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductVariantDto } from './dto/create-product_variant.dto';
 import { UpdateProductVariantDto } from './dto/update-product_variant.dto';
-import { db } from 'database'
+import { db } from 'database';
 import { product_variants, products } from 'db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 
 @Injectable()
 export class ProductVariantsService {
@@ -11,37 +11,52 @@ export class ProductVariantsService {
     const [newVariant] = await db
       .insert(product_variants)
       .values({
-        ...dto
+        ...dto,
       })
       .returning();
 
-    return newVariant;  
+    return newVariant;
   }
 
-  async getAllProductVariants() {
-    return db.select().from(product_variants);
+  async getAllProductVariants(is_active?: boolean) {
+    return db
+      .select()
+      .from(product_variants)
+      .where(
+        is_active !== undefined
+          ? eq(product_variants.is_active, is_active)
+          : undefined,
+      );
   }
 
-  async getProductVariantById(id: number) {
+  async getProductVariantById(id: number, is_active?: boolean) {
+    const where =
+      is_active === undefined
+        ? eq(product_variants.product_variant_id, id)
+        : and(
+            eq(product_variants.product_variant_id, id),
+            eq(product_variants.is_active, is_active),
+          );
+
     const [variant] = await db
-    .select()
-    .from(product_variants)
-    .where(eq(product_variants.product_variant_id, id));
-   
+      .select()
+      .from(product_variants)
+      .where(where)
+      .limit(1);
+
     if (!variant) {
       throw new NotFoundException('Product variant not found.');
     }
 
     return variant;
-
   }
 
   async updateProductVariant(id: number, dto: UpdateProductVariantDto) {
     const [variant] = await db
       .update(product_variants)
-      .set({ 
-        ...dto
-        })
+      .set({
+        ...dto,
+      })
       .where(eq(product_variants.product_variant_id, id))
       .returning();
 
@@ -57,9 +72,9 @@ export class ProductVariantsService {
       .delete(product_variants)
       .where(eq(product_variants.product_variant_id, id))
       .returning();
-    
+
     if (!deletedVariant) {
       throw new NotFoundException('Product variant not found.');
-    } 
+    }
   }
 }

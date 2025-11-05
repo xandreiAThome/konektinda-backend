@@ -11,8 +11,8 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import type { CreateProductsDto } from './dto/createproducts.dto';
-import type { UpdateProductsDto } from './dto/updateprodcuts.dto';
+import { CreateProductsDto } from './dto/createproducts.dto';
+import { UpdateProductsDto } from './dto/updateprodcuts.dto';
 import type { Product } from 'interface/product';
 
 @Controller('products')
@@ -31,8 +31,10 @@ export class ProductsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  createProduct(@Body() dto: CreateProductsDto): Promise<Product> {
-    return this.productsService.createProduct(dto);
+  createProduct(
+    @Body() createProductsDto: CreateProductsDto,
+  ): Promise<Product> {
+    return this.productsService.createProduct(createProductsDto);
   }
 
   @Put(':id')

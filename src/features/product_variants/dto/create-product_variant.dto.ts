@@ -1,17 +1,18 @@
-import { IsBoolean, IsDecimal, IsInt, IsString, MaxLength } from "class-validator";
+import { IsBoolean, IsInt, IsNotEmpty, IsNumber, IsString, MaxLength } from "class-validator";
 
 export class CreateProductVariantDto {
     @IsInt()
     product_id: number;
 
     @IsString()
+    @IsNotEmpty()
     @MaxLength(100)
     variant_name: string;
 
     @IsInt()
     stock: number;
 
-    @IsDecimal()
+    @IsNumber()
     price: number;
 
     @IsInt()

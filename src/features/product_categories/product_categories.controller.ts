@@ -12,7 +12,6 @@ import { ProductCategoriesService } from './product_categories.service';
 import { CreateProductCategoryDto } from './dto/create-product_category.dto';
 import { UpdateProductCategoryDto } from './dto/update-product_category.dto';
 
-
 @Controller('product-categories')
 export class ProductCategoriesController {
   constructor(
@@ -20,8 +19,12 @@ export class ProductCategoriesController {
   ) {}
 
   @Post()
-  createProductCategory(@Body() createProductCategoryDto: CreateProductCategoryDto) {
-    return this.productCategoriesService.createProductCategory(createProductCategoryDto);
+  createProductCategory(
+    @Body() createProductCategoryDto: CreateProductCategoryDto,
+  ) {
+    return this.productCategoriesService.createProductCategory(
+      createProductCategoryDto,
+    );
   }
 
   @Get()
@@ -39,7 +42,10 @@ export class ProductCategoriesController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateProductCategoryDto: UpdateProductCategoryDto,
   ) {
-    return this.productCategoriesService.updateProductCategory(+id, updateProductCategoryDto);
+    return this.productCategoriesService.updateProductCategory(
+      +id,
+      updateProductCategoryDto,
+    );
   }
 
   @Delete(':id')
