@@ -5,9 +5,16 @@ import { SuppliersModule } from './features/suppliers/suppliers.module';
 import { ProductsModule } from './features/products/products.module';
 import { ProductCategoriesModule } from './features/product_categories/product_categories.module';
 import { ProductVariantsModule } from './features/product_variants/product_variants.module';
+import { SupplierOrdersModule } from './features/supplier_orders/supplier_orders.module';
 
 @Module({
-  imports: [SuppliersModule, ProductsModule, ProductCategoriesModule, ProductVariantsModule],
+  imports: [
+    SuppliersModule,
+    ProductsModule,
+    ProductCategoriesModule,
+    ProductVariantsModule,
+    SupplierOrdersModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
