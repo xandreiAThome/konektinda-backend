@@ -6,6 +6,7 @@ import { ProductsModule } from './features/products/products.module';
 import { ProductCategoriesModule } from './features/product_categories/product_categories.module';
 import { ProductVariantsModule } from './features/product_variants/product_variants.module';
 import { SupplierOrdersModule } from './features/supplier_orders/supplier_orders.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { SupplierOrdersModule } from './features/supplier_orders/supplier_orders
     ProductCategoriesModule,
     ProductVariantsModule,
     SupplierOrdersModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
