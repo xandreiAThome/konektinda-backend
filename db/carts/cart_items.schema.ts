@@ -13,7 +13,7 @@ export const cart_items = pgTable('cart_items', {
     .references(() => product_variants.product_variant_id)
     .notNull(),
   quantity: integer('quantity').notNull().default(1),
-  unit_price: decimal('unit_price', { precision: 10, scale: 2 }).notNull(),
+  unit_price: decimal('unit_price', { precision: 10, scale: 2, mode: 'number' }).notNull(),
   discount_applied: integer('discount_applied').notNull().default(0),
   date_priced: timestamp('date_priced').notNull().defaultNow(),
 });

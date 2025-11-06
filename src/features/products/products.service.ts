@@ -27,17 +27,24 @@ export class ProductsService {
   }
 
   async getSingleProduct(id: number): Promise<Product> {
-    const [product] = await db.select().from(products).where(eq(products.product_id, id));
-    if (!product) throw new NotFoundException(`Product with id ${id} not found`);
+    const [product] = await db
+      .select()
+      .from(products)
+      .where(eq(products.product_id, id));
+    if (!product)
+      throw new NotFoundException(`Product with id ${id} not found`);
     return product;
   }
 
   async updateProduct(id: number, dto: UpdateProductsDto): Promise<Product> {
     const updateData: Partial<Product> = {};
-    if (dto.product_category_id !== undefined) updateData.product_category_id = dto.product_category_id;
+    if (dto.product_category_id !== undefined)
+      updateData.product_category_id = dto.product_category_id;
     if (dto.supplier_id !== undefined) updateData.supplier_id = dto.supplier_id;
-    if (dto.product_name !== undefined) updateData.product_name = dto.product_name;
-    if (dto.product_description !== undefined) updateData.product_description = dto.product_description;
+    if (dto.product_name !== undefined)
+      updateData.product_name = dto.product_name;
+    if (dto.product_description !== undefined)
+      updateData.product_description = dto.product_description;
     if (dto.is_active !== undefined) updateData.is_active = dto.is_active;
 
     const [updatedProduct] = await db
@@ -46,12 +53,17 @@ export class ProductsService {
       .where(eq(products.product_id, id))
       .returning();
 
-    if (!updatedProduct) throw new NotFoundException(`Product with id ${id} not found`);
+    if (!updatedProduct)
+      throw new NotFoundException(`Product with id ${id} not found`);
     return updatedProduct;
   }
 
   async deleteProduct(id: number): Promise<void> {
-    const [deletedProduct] = await db.delete(products).where(eq(products.product_id, id)).returning();
-    if (!deletedProduct) throw new NotFoundException(`Product with id ${id} not found`);
+    const [deletedProduct] = await db
+      .delete(products)
+      .where(eq(products.product_id, id))
+      .returning();
+    if (!deletedProduct)
+      throw new NotFoundException(`Product with id ${id} not found`);
   }
 }
