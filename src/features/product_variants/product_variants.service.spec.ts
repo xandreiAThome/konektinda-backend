@@ -22,6 +22,7 @@ describe('ProductVariantsService', () => {
     }).compile();
 
     service = module.get<ProductVariantsService>(ProductVariantsService);
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {

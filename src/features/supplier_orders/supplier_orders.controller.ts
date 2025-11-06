@@ -12,13 +12,14 @@ import {
 import { SupplierOrdersService } from './supplier_orders.service';
 import { CreateSupplierOrderDto } from './dto/create-supplier_order.dto';
 import { UpdateSupplierOrderDto } from './dto/update-supplier_order.dto';
+import { OrderStatus } from 'src/enums';
 
 @Controller('supplier-orders')
 export class SupplierOrdersController {
   constructor(private readonly supplierOrdersService: SupplierOrdersService) {}
 
   @Get()
-  getAllSupplierOrders(@Query('status') status: string) {
+  getAllSupplierOrders(@Query('status') status: OrderStatus) {
     return this.supplierOrdersService.getAllSupplierOrders(status);
   }
 
@@ -30,7 +31,7 @@ export class SupplierOrdersController {
   @Get(':supplierId')
   getSupplierOrdersBySupplierId(
     @Param('supplierId', ParseIntPipe) supplierId: number,
-    @Query('status') status: string,
+    @Query('status') status: OrderStatus,
   ) {
     return this.supplierOrdersService.getSupplierOrdersBySupplierId(
       supplierId,
@@ -48,6 +49,9 @@ export class SupplierOrdersController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateSupplierOrderDto: UpdateSupplierOrderDto,
   ) {
-    return this.supplierOrdersService.update(+id, updateSupplierOrderDto);
+    return this.supplierOrdersService.updateSupplierOrder(
+      +id,
+      updateSupplierOrderDto,
+    );
   }
 }
