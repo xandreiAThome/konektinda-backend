@@ -68,7 +68,6 @@ describe('SupplierOrdersService', () => {
   });
 
   const valid = {
-    supplier_order_id: 1,
     order_id: 1,
     supplier_id: 2,
     supplier_order_num: '123ABCD',
@@ -181,7 +180,11 @@ describe('SupplierOrdersService', () => {
   describe('updateSupplierOrder', () => {
     const update = { status: OrderStatus.COMPLETE };
     it('should only update the status for an existing supplier order', async () => {
-      const updatedRow = { ...valid, status: update.status };
+      const updatedRow = {
+        supplier_order_id: 1,
+        ...valid,
+        status: update.status,
+      };
       (db.update as jest.Mock).mockReturnValueOnce({
         set: jest.fn().mockReturnValueOnce({
           where: jest.fn().mockReturnValueOnce({

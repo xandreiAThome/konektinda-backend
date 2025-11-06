@@ -19,19 +19,19 @@ export class SupplierOrdersController {
   constructor(private readonly supplierOrdersService: SupplierOrdersService) {}
 
   @Get()
-  getAllSupplierOrders(@Query('status') status: OrderStatus) {
+  getAllSupplierOrders(@Query('status') status?: OrderStatus) {
     return this.supplierOrdersService.getAllSupplierOrders(status);
   }
 
   @Get(':id')
-  getSupplierOrderById(@Param('id') id: string) {
-    return this.supplierOrdersService.getSupplierOrderById(+id);
+  getSupplierOrderById(@Param('id', ParseIntPipe) id: number) {
+    return this.supplierOrdersService.getSupplierOrderById(id);
   }
 
   @Get(':supplierId')
   getSupplierOrdersBySupplierId(
     @Param('supplierId', ParseIntPipe) supplierId: number,
-    @Query('status') status: OrderStatus,
+    @Query('status') status?: OrderStatus,
   ) {
     return this.supplierOrdersService.getSupplierOrdersBySupplierId(
       supplierId,
@@ -45,12 +45,12 @@ export class SupplierOrdersController {
   }
 
   @Patch(':id')
-  update(
+  updateSupplierOrder(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateSupplierOrderDto: UpdateSupplierOrderDto,
   ) {
     return this.supplierOrdersService.updateSupplierOrder(
-      +id,
+      id,
       updateSupplierOrderDto,
     );
   }
