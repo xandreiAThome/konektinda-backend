@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { SupplierOrdersService } from './supplier_orders.service';
 import { CreateSupplierOrderDto } from './dto/create-supplier_order.dto';
@@ -16,14 +17,9 @@ import { UpdateSupplierOrderDto } from './dto/update-supplier_order.dto';
 export class SupplierOrdersController {
   constructor(private readonly supplierOrdersService: SupplierOrdersService) {}
 
-  @Post()
-  create(@Body() createSupplierOrderDto: CreateSupplierOrderDto) {
-    return this.supplierOrdersService.create(createSupplierOrderDto);
-  }
-
   @Get()
-  getAllSupplierOrders() {
-    return this.supplierOrdersService.getAllSupplierOrders();
+  getAllSupplierOrders(@Query('status') status: string) {
+    return this.supplierOrdersService.getAllSupplierOrders(status);
   }
 
   @Get(':id')
@@ -34,8 +30,12 @@ export class SupplierOrdersController {
   @Get(':supplierId')
   getSupplierOrdersBySupplierId(
     @Param('supplierId', ParseIntPipe) supplierId: number,
+    @Query('status') status: string,
   ) {
-    return this.supplierOrdersService.getSupplierOrdersBySupplierId(supplierId);
+    return this.supplierOrdersService.getSupplierOrdersBySupplierId(
+      supplierId,
+      status,
+    );
   }
 
   @Get(':id/items')

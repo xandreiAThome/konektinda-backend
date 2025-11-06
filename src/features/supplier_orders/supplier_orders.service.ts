@@ -4,11 +4,7 @@ import { UpdateSupplierOrderDto } from './dto/update-supplier_order.dto';
 
 @Injectable()
 export class SupplierOrdersService {
-  create(createSupplierOrderDto: CreateSupplierOrderDto) {
-    return 'This action adds a new supplierOrder';
-  }
-
-  getAllSupplierOrders() {
+  getAllSupplierOrders(status?: string) {
     return `This action returns all supplierOrders`;
   }
 
@@ -16,7 +12,7 @@ export class SupplierOrdersService {
     return `This action returns a #${id} supplierOrder`;
   }
 
-  getSupplierOrdersBySupplierId(supplierId: number) {
+  getSupplierOrdersBySupplierId(supplierId: number, status?: string) {
     return `This action returns a supplier #${supplierId} supplierOrder`;
   }
 
