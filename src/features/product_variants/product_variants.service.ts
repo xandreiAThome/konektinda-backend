@@ -38,11 +38,7 @@ export class ProductVariantsService {
             eq(product_variants.is_active, is_active),
           );
 
-    const [variant] = await db
-      .select()
-      .from(product_variants)
-      .where(where)
-      .limit(1);
+    const [variant] = await db.select().from(product_variants).where(where);
 
     if (!variant) {
       throw new NotFoundException('Product variant not found.');
