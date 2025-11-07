@@ -98,6 +98,7 @@ describe('SupplierOrdersController', () => {
     });
   });
 
+  /*
   describe('GET /supplier-orders/:supplierId', () => {
     it('should return all supplier orders by the specified supplier id', async () => {
       const rows = [valid, { ...valid, supplier_order_id: 2 }];
@@ -123,6 +124,7 @@ describe('SupplierOrdersController', () => {
       );
     });
   });
+  */
 
   describe('GET /supplier-orders/:id/items', () => {
     const orderItems = [

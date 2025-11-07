@@ -28,6 +28,7 @@ export class SupplierOrdersController {
     return this.supplierOrdersService.getSupplierOrderById(id);
   }
 
+  /*
   @Get(':supplierId')
   getSupplierOrdersBySupplierId(
     @Param('supplierId', ParseIntPipe) supplierId: number,
@@ -38,6 +39,7 @@ export class SupplierOrdersController {
       status,
     );
   }
+    */
 
   @Get(':id/items')
   getSupplierOrderItems(@Param('id', ParseIntPipe) id: number) {

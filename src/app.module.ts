@@ -6,7 +6,7 @@ import { ProductsModule } from './features/products/products.module';
 import { ProductCategoriesModule } from './features/product_categories/product_categories.module';
 import { ProductVariantsModule } from './features/product_variants/product_variants.module';
 import { SupplierOrdersModule } from './features/supplier_orders/supplier_orders.module';
-import { OrdersModule } from './orders/orders.module';
+import { OrdersModule } from './features/orders/orders.module';
 
 @Module({
   imports: [
