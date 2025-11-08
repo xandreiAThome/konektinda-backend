@@ -14,7 +14,7 @@ export class FirebaseService implements OnModuleInit {
           privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
         }),
       });
-      console.log('✅ Firebase initialized for project:', process.env.FIREBASE_PROJECT_ID);
+      console.log('Firebase initialized for project:', process.env.FIREBASE_PROJECT_ID);
     }
   }
 

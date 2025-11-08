@@ -29,6 +29,7 @@
     "class-validator": "^0.14.2",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.7",
+    "firebase": "^12.5.0",
     "firebase-admin": "^13.5.0",
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
@@ -82,8 +83,7 @@
       "^src/(.*)$": "<rootDir>/$1",
       "^db/(.*)$": "<rootDir>/../db/$1",
       "^database$": "<rootDir>/../database.ts",
-      "^interface/(.*)$": "<rootDir>/../interface/$1",
-      "^src/(.*)$": "<rootDir>/$1"
+      "^interface/(.*)$": "<rootDir>/../interface/$1"
     },
     "modulePaths": [
       "<rootDir>/src/"
