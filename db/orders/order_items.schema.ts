@@ -14,7 +14,7 @@ export const order_items = pgTable('order_items', {
     .references(() => product_variants.product_variant_id)
     .notNull(),
   quantity: integer('quantity').notNull().default(1),
-  unit_price: decimal('unit_price', { precision: 10, scale: 2 }).notNull(),
+  unit_price: decimal('unit_price', { precision: 10, scale: 2, mode: 'number' }).notNull(),
   discount_applied: integer('discount_applied').notNull().default(0),
 });
 
