@@ -106,6 +106,7 @@ describe('OrdersService', () => {
     });
   });
 
+  /*
   describe('getOrdersByUserId', () => {
     it('should return all orders by user id', async () => {
       const rows = [valid, { ...valid, order_id: 2 }];
@@ -133,7 +134,7 @@ describe('OrdersService', () => {
       expect(db.select).toHaveBeenCalled();
     });
   });
-
+*/
   describe('getOrderItems', () => {
     const orderItems = [
       {

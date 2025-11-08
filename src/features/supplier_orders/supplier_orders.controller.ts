@@ -19,8 +19,11 @@ export class SupplierOrdersController {
   constructor(private readonly supplierOrdersService: SupplierOrdersService) {}
 
   @Get()
-  getAllSupplierOrders(@Query('status') status?: OrderStatus) {
-    return this.supplierOrdersService.getAllSupplierOrders(status);
+  getAllSupplierOrders(
+    @Query('status') status?: OrderStatus,
+    @Query('supplierId') supplierId?: number,
+  ) {
+    return this.supplierOrdersService.getAllSupplierOrders(status, supplierId);
   }
 
   @Get(':id')

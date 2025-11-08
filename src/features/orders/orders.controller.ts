@@ -24,8 +24,11 @@ export class OrdersController {
   }
 
   @Get()
-  getAllOrders(@Query('status') status?: OrderStatus) {
-    return this.ordersService.getAllOrders(status);
+  getAllOrders(
+    @Query('status') status?: OrderStatus,
+    @Query('userId') userId?: number,
+  ) {
+    return this.ordersService.getAllOrders(status, userId);
   }
 
   @Get(':id')

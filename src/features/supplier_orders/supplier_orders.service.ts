@@ -8,13 +8,15 @@ import { OrderStatus } from 'src/enums';
 
 @Injectable()
 export class SupplierOrdersService {
-  async getAllSupplierOrders(status?: OrderStatus) {
-    return db
-      .select()
-      .from(supplier_orders)
-      .where(
-        status !== undefined ? eq(supplier_orders.status, status) : undefined,
-      );
+  async getAllSupplierOrders(status?: OrderStatus, supplierId?: number) {
+    let filter = and(
+      status !== undefined ? eq(supplier_orders.status, status) : undefined,
+      supplierId !== undefined
+        ? eq(supplier_orders.supplier_id, supplierId)
+        : undefined,
+    );
+
+    return db.select().from(supplier_orders).where(filter);
   }
 
   async getSupplierOrderById(id: number) {

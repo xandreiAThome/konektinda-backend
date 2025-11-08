@@ -21,11 +21,13 @@ const money = (n: number) => Number(n.toFixed(2));
 
 @Injectable()
 export class OrdersService {
-  async getAllOrders(status?: OrderStatus) {
-    return db
-      .select()
-      .from(orders)
-      .where(status !== undefined ? eq(orders.status, status) : undefined);
+  async getAllOrders(status?: OrderStatus, userId?: number) {
+    const filter = and(
+      status !== undefined ? eq(orders.status, status) : undefined,
+      userId !== undefined ? eq(orders.user_id, userId) : undefined,
+    );
+
+    return db.select().from(orders).where(filter);
   }
 
   async getOrderById(id: number) {
@@ -41,6 +43,7 @@ export class OrdersService {
     return order;
   }
 
+  /*
   async getOrdersByUserId(id: number, status?: OrderStatus) {
     const filter =
       status !== undefined
@@ -55,6 +58,7 @@ export class OrdersService {
 
     return rows;
   }
+    */
 
   async getOrderItems(id: number) {
     const orderItems = await db
