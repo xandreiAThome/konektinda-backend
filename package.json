@@ -82,7 +82,11 @@
       "^src/(.*)$": "<rootDir>/$1",
       "^db/(.*)$": "<rootDir>/../db/$1",
       "^database$": "<rootDir>/../database.ts",
-      "^interface/(.*)$": "<rootDir>/../interface/$1"
-    }
+      "^interface/(.*)$": "<rootDir>/../interface/$1",
+      "^src/(.*)$": "<rootDir>/$1"
+    },
+    "modulePaths": [
+      "<rootDir>/src/"
+    ]
   }
 }

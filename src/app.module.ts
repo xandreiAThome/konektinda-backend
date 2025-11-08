@@ -7,10 +7,17 @@ import { FirebaseModule } from './firebase/firebase.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
+import { SupplierOrdersModule } from './features/supplier_orders/supplier_orders.module';
+import { OrdersModule } from './features/orders/orders.module';
 
 @Module({
-  imports: [SuppliersModule, ProductsModule, FirebaseModule, AuthModule, UsersModule, 
-    ConfigModule.forRoot({ isGlobal: true}),
+  imports: [
+    SuppliersModule,
+    ProductsModule,
+    ProductCategoriesModule,
+    ProductVariantsModule,
+    SupplierOrdersModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

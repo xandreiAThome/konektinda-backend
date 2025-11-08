@@ -7,14 +7,19 @@ import {
 } from 'drizzle-orm/pg-core';
 import { users } from '../users/users.schema';
 import { payments } from '../payments/payments.schema';
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
+import { orderStatuses } from 'db/enums';
+import { InferSelectModel, InferInsertModel } from 'drizzle-orm';
 
 export const orders = pgTable('orders', {
   order_id: integer('order_id').primaryKey().generatedAlwaysAsIdentity(),
   user_id: integer('user_id')
     .references(() => users.user_id)
     .notNull(),
-  grand_total: decimal('grand_total', { precision: 10, scale: 2, mode: 'number' }).notNull(), // Calculated from all supplier orders
+  grand_total: decimal('grand_total', {
+    precision: 10,
+    scale: 2,
+    mode: 'number',
+  }).notNull(), // Calculated from all supplier orders
   region: varchar('region', { length: 50 }).notNull(),
   province: varchar('province', { length: 50 }).notNull(),
   city: varchar('city', { length: 50 }).notNull(),
@@ -24,6 +29,7 @@ export const orders = pgTable('orders', {
     .references(() => payments.ref_num)
     .notNull()
     .unique(),
+  status: orderStatuses().notNull().default('PENDING'),
   order_date: timestamp('order_date').notNull().defaultNow(),
 });
 

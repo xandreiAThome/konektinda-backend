@@ -32,14 +32,14 @@ export class ProductVariantsController {
   }
 
   @Get()
-  getAllProductVariants(@Query('is_active') is_active: boolean) {
+  getAllProductVariants(@Query('is_active') is_active?: boolean) {
     return this.productVariantsService.getAllProductVariants(is_active);
   }
 
   @Get(':id')
   getProductVariantById(
     @Param('id', ParseIntPipe) id: number,
-    @Query('is_active') is_active: boolean,
+    @Query('is_active') is_active?: boolean,
   ) {
     return this.productVariantsService.getProductVariantById(id, is_active);
   }
