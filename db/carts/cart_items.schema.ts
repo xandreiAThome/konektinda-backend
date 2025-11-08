@@ -7,13 +7,17 @@ export const cart_items = pgTable('cart_items', {
     .primaryKey()
     .generatedAlwaysAsIdentity(),
   cart_id: integer('cart_id')
-    .references(() => carts.cart_id)
+    .references(() => carts.cart_id, { onDelete: 'cascade' })
     .notNull(),
   product_variant_id: integer('product_variant_id')
     .references(() => product_variants.product_variant_id)
     .notNull(),
   quantity: integer('quantity').notNull().default(1),
-  unit_price: decimal('unit_price', { precision: 10, scale: 2, mode: 'number' }).notNull(),
+  unit_price: decimal('unit_price', {
+    precision: 10,
+    scale: 2,
+    mode: 'number',
+  }).notNull(),
   discount_applied: integer('discount_applied').notNull().default(0),
   date_priced: timestamp('date_priced').notNull().defaultNow(),
 });
