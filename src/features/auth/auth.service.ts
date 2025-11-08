@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { FirebaseService } from '../firebase/firebase.service';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from 'src/features/users/users.service';
 import { NewUser } from 'db/schema';
 
 @Injectable()

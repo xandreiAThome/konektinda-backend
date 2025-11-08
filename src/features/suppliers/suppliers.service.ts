@@ -1,8 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { db } from 'database';
-import { suppliers } from 'db/schema';
+import { Supplier, suppliers } from 'db/schema';
 import { eq } from 'drizzle-orm';
-import { Supplier } from 'interface/suppliers';
 import { CreateSupplierDto } from './dto/createsupplier.dto';
 import { UpdateSupplierDto } from './dto/udpatesupplier.dto';
 

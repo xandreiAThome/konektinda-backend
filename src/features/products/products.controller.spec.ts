@@ -8,7 +8,6 @@ describe('ProductsController', () => {
   let controller: ProductsController;
   let service: ProductsService;
 
-  // Mock all service methods
   const mockProductsService = {
     getAllProducts: jest.fn(),
     getSingleProduct: jest.fn(),

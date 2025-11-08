@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import { UsersService } from 'src/users/users.service';
-import { FirebaseService } from 'src/firebase/firebase.service';
+import { UsersService } from 'src/features/users/users.service';
+import { FirebaseService } from 'src/features/firebase/firebase.service';
 import { UnauthorizedException } from '@nestjs/common';
 
 describe('AuthService', () => {

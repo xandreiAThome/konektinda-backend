@@ -1,14 +1,16 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { SuppliersModule } from './suppliers/suppliers.module';
-import { ProductsModule } from './products/products.module';
-import { FirebaseModule } from './firebase/firebase.module';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
-import { ConfigModule } from '@nestjs/config';
+import { SuppliersModule } from './features/suppliers/suppliers.module';
+import { ProductsModule } from './features/products/products.module';
 import { SupplierOrdersModule } from './features/supplier_orders/supplier_orders.module';
 import { OrdersModule } from './features/orders/orders.module';
+import { ProductCategoriesModule } from './features/product_categories/product_categories.module';
+import { ProductVariantsModule } from './features/product_variants/product_variants.module';
+import { FirebaseModule } from './features/firebase/firebase.module';
+import { UsersModule } from './features/users/users.module';
+import { AuthModule } from './features/auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -18,7 +20,12 @@ import { OrdersModule } from './features/orders/orders.module';
     ProductVariantsModule,
     SupplierOrdersModule,
     OrdersModule,
+    FirebaseModule,
+    AuthModule,
+    UsersModule,
+    ConfigModule.forRoot({ isGlobal: true })
   ],
+
   controllers: [AppController],
   providers: [AppService],
 })
