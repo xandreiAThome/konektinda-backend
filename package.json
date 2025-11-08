@@ -79,6 +79,7 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
     "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1",
       "^db/(.*)$": "<rootDir>/../db/$1",
       "^database$": "<rootDir>/../database.ts",
       "^interface/(.*)$": "<rootDir>/../interface/$1"
