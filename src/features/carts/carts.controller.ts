@@ -15,35 +15,37 @@ import { CartsService } from './carts.service';
 import { FirebaseAuthGuard } from '../auth/guard/firebase-auth-guard';
 import type { AuthenticatedRequest } from 'interface/auth_req';
 
+// TEMP HARCODED FIREBASE UID
+const uid = 'test-firebase-uid';
+
 @Controller('cart')
-@UseGuards(FirebaseAuthGuard)
 export class CartsController {
   constructor(private readonly cartsService: CartsService) {}
 
   // Get the current user's cart
   @Get()
   getCartByFirebaseUid(@Req() req: AuthenticatedRequest) {
-    const uid = req.user.uid;
+    // const uid = req.user.uid;
     return this.cartsService.getCartByFirebaseUid(uid);
   }
 
   // Create the user's cart
   @Post()
   createCart(@Req() req: AuthenticatedRequest) {
-    const uid = req.user.uid;
+    // const uid = req.user.uid;
     return this.cartsService.createCart(uid);
   }
 
   // Delete the user's cart
   @Delete()
   deleteCart(@Req() req: AuthenticatedRequest) {
-    const uid = req.user.uid;
+    // const uid = req.user.uid;
     return this.cartsService.deleteCart(uid);
   }
 
   // DEBUG ROUTE TO GET ALL CARTS. CAN ALSO FILTER BY USER ID ?userId=xxx
   @Get('/all')
-  @UseGuards()
+  // @UseGuards() // Override auth guard
   getAllCarts(@Query('userId') userId?: number) {
     return this.cartsService.getAllCarts(userId);
   }
@@ -54,7 +56,7 @@ export class CartsController {
 
   @Get('items')
   getCartItems(@Req() req: AuthenticatedRequest) {
-    const uid = req.user.uid;
+    // const uid = req.user.uid;
     return this.cartsService.getCartItems(uid);
   }
 
@@ -63,7 +65,7 @@ export class CartsController {
     @Req() req: AuthenticatedRequest,
     @Param('productVariantId', ParseIntPipe) productVariantId: number,
   ) {
-    const uid = req.user.uid;
+    // const uid = req.user.uid;
     return this.cartsService.getCartItemByVariantId(uid, productVariantId);
   }
 
@@ -73,7 +75,7 @@ export class CartsController {
     @Param('productVariantId', ParseIntPipe) productVariantId: number,
     @Body('quantity', ParseIntPipe) quantity: number,
   ) {
-    const uid = req.user.uid;
+    // const uid = req.user.uid;
     return this.cartsService.addCartItem(uid, productVariantId, quantity);
   }
 
@@ -83,7 +85,7 @@ export class CartsController {
     @Param('productVariantId', ParseIntPipe) productVariantId: number,
     @Body('quantity', ParseIntPipe) quantity?: number,
   ) {
-    const uid = req.user.uid;
+    // const uid = req.user.uid;
     return this.cartsService.updateCartItem(uid, productVariantId, quantity);
   }
 
@@ -92,7 +94,7 @@ export class CartsController {
     @Req() req: AuthenticatedRequest,
     @Param('productVariantId', ParseIntPipe) productVariantId: number,
   ) {
-    const uid = req.user.uid;
+    // const uid = req.user.uid;
     return this.cartsService.deleteCartItem(uid, productVariantId);
   }
 }

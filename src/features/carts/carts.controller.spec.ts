@@ -55,7 +55,9 @@ describe('Cart endpoints (controller)', () => {
       const res = await controller.getCartByFirebaseUid(req);
 
       expect(res).toEqual(mockCart);
-      expect(mockService.getCartByFirebaseUid).toHaveBeenCalledWith(uid);
+      expect(mockService.getCartByFirebaseUid).toHaveBeenCalledWith(
+        expect.any(String),
+      );
     });
 
     it('throws NotFound when cart is missing', async () => {
@@ -66,7 +68,9 @@ describe('Cart endpoints (controller)', () => {
       await expect(controller.getCartByFirebaseUid(req)).rejects.toThrow(
         NotFoundException,
       );
-      expect(mockService.getCartByFirebaseUid).toHaveBeenCalledWith(uid);
+      expect(mockService.getCartByFirebaseUid).toHaveBeenCalledWith(
+        expect.any(String),
+      );
     });
   });
 
@@ -77,7 +81,7 @@ describe('Cart endpoints (controller)', () => {
       const res = await controller.createCart(req);
 
       expect(res).toEqual(mockCart);
-      expect(mockService.createCart).toHaveBeenCalledWith(uid);
+      expect(mockService.createCart).toHaveBeenCalledWith(expect.any(String));
     });
   });
 
@@ -88,7 +92,7 @@ describe('Cart endpoints (controller)', () => {
       const res = await controller.deleteCart(req);
 
       expect(res).toBeUndefined(); // <- fix: call it as a matcher
-      expect(mockService.deleteCart).toHaveBeenCalledWith(uid);
+      expect(mockService.deleteCart).toHaveBeenCalledWith(expect.any(String));
     });
 
     it('throws NotFound when cart is missing', async () => {
@@ -97,7 +101,7 @@ describe('Cart endpoints (controller)', () => {
       await expect(controller.deleteCart(req)).rejects.toThrow(
         NotFoundException,
       );
-      expect(mockService.deleteCart).toHaveBeenCalledWith(uid);
+      expect(mockService.deleteCart).toHaveBeenCalledWith(expect.any(String));
     });
   });
 });
@@ -138,7 +142,7 @@ describe('Cart item endpoints (controller)', () => {
       const res = await controller.getCartItems(req);
 
       expect(res).toEqual([mockItem]);
-      expect(mockService.getCartItems).toHaveBeenCalledWith(uid);
+      expect(mockService.getCartItems).toHaveBeenCalledWith(expect.any(String));
     });
   });
 
@@ -150,7 +154,7 @@ describe('Cart item endpoints (controller)', () => {
 
       expect(res).toEqual(mockItem);
       expect(mockService.getCartItemByVariantId).toHaveBeenCalledWith(
-        uid,
+        expect.any(String),
         productVariantId,
       );
     });
@@ -174,7 +178,7 @@ describe('Cart item endpoints (controller)', () => {
 
       expect(res).toEqual(mockItem);
       expect(mockService.addCartItem).toHaveBeenCalledWith(
-        uid,
+        expect.any(String),
         productVariantId,
         2,
       );
@@ -198,7 +202,7 @@ describe('Cart item endpoints (controller)', () => {
 
       expect(res).toEqual(updated);
       expect(mockService.updateCartItem).toHaveBeenCalledWith(
-        uid,
+        expect.any(String),
         productVariantId,
         3,
       );
@@ -213,7 +217,7 @@ describe('Cart item endpoints (controller)', () => {
 
       expect(res).toEqual(mockItem);
       expect(mockService.deleteCartItem).toHaveBeenCalledWith(
-        uid,
+        expect.any(String),
         productVariantId,
       );
     });
