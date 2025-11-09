@@ -11,6 +11,7 @@ import { FirebaseModule } from './features/firebase/firebase.module';
 import { UsersModule } from './features/users/users.module';
 import { AuthModule } from './features/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { CartsModule } from './features/carts/carts.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { ConfigModule } from '@nestjs/config';
     FirebaseModule,
     AuthModule,
     UsersModule,
-    ConfigModule.forRoot({ isGlobal: true })
+    ConfigModule.forRoot({ isGlobal: true }),
+    CartsModule
   ],
 
   controllers: [AppController],
