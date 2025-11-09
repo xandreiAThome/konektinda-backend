@@ -1,9 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
-import { CreateProductsDto } from './dto/createproducts.dto';
-import { UpdateProductsDto } from './dto/updateprodcuts.dto';
-import { Product, products } from 'db/schema';
-import { db } from 'database';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { db } from "database";
+import { Product, products } from "db/schema";
+import { eq } from "drizzle-orm";
+import { CreateProductsDto } from "./dto/createproducts.dto";
+import { UpdateProductsDto } from "./dto/updateprodcuts.dto";
 
 @Injectable()
 export class ProductsService {
@@ -11,13 +11,12 @@ export class ProductsService {
     const [newProduct] = await db
       .insert(products)
       .values({
-        product_category_id: dto.product_category_id,
-        supplier_id: dto.supplier_id,
-        product_name: dto.product_name,
+        ...dto,
         product_description: dto.product_description ?? null,
         is_active: dto.is_active ?? true,
       })
       .returning();
+
     return newProduct;
   }
 
@@ -32,16 +31,9 @@ export class ProductsService {
   }
 
   async updateProduct(id: number, dto: UpdateProductsDto): Promise<Product> {
-    const updateData: Partial<Product> = {};
-    if (dto.product_category_id !== undefined) updateData.product_category_id = dto.product_category_id;
-    if (dto.supplier_id !== undefined) updateData.supplier_id = dto.supplier_id;
-    if (dto.product_name !== undefined) updateData.product_name = dto.product_name;
-    if (dto.product_description !== undefined) updateData.product_description = dto.product_description;
-    if (dto.is_active !== undefined) updateData.is_active = dto.is_active;
-
     const [updatedProduct] = await db
       .update(products)
-      .set(updateData)
+      .set({ ...dto }) // DTO is already Partial
       .where(eq(products.product_id, id))
       .returning();
 
@@ -50,7 +42,7 @@ export class ProductsService {
   }
 
   async deleteProduct(id: number): Promise<void> {
-    const [deletedProduct] = await db.delete(products).where(eq(products.product_id, id)).returning();
-    if (!deletedProduct) throw new NotFoundException(`Product with id ${id} not found`);
+    const deleted = await db.delete(products).where(eq(products.product_id, id)).returning();
+    if (!deleted.length) throw new NotFoundException(`Product with id ${id} not found`);
   }
 }
