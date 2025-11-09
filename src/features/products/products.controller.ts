@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   HttpCode,
   HttpStatus,
+  Patch,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductsDto } from './dto/createproducts.dto';
@@ -35,7 +36,7 @@ export class ProductsController {
     return this.productsService.createProduct(dto);
   }
 
-  @Put(':id')
+  @Patch(':id')
   updateProduct(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateProductsDto,
