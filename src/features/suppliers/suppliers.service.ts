@@ -3,7 +3,7 @@ import { db } from 'database';
 import { Supplier, suppliers } from 'db/schema';
 import { eq } from 'drizzle-orm';
 import { CreateSupplierDto } from './dto/createsupplier.dto';
-import { UpdateSupplierDto } from './dto/udpatesupplier.dto';
+import { UpdateSupplierDto } from './dto/updatesupplier.dto';
 
 @Injectable()
 export class SuppliersService {
@@ -36,7 +36,10 @@ export class SuppliersService {
     return supplier;
   }
 
-  async updateSupplier(id: number, supplierData: UpdateSupplierDto): Promise<Supplier> {
+  async updateSupplier(
+    id: number,
+    supplierData: UpdateSupplierDto,
+  ): Promise<Supplier> {
     const [supplier] = await db
       .update(suppliers)
       .set(supplierData)
