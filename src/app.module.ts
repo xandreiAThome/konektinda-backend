@@ -8,6 +8,7 @@ import { ProductVariantsModule } from './features/product_variants/product_varia
 import { SupplierOrdersModule } from './features/supplier_orders/supplier_orders.module';
 import { OrdersModule } from './features/orders/orders.module';
 import { CartsModule } from './features/carts/carts.module';
+import { CartItemsModule } from './cart_items/cart_items.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CartsModule } from './features/carts/carts.module';
     SupplierOrdersModule,
     OrdersModule,
     CartsModule,
+    CartItemsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
