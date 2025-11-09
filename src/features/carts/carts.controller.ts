@@ -1,32 +1,30 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  ParseIntPipe,
-} from '@nestjs/common';
+import { Controller, Get, Post, Delete, Req, UseGuards } from '@nestjs/common';
 import { CartsService } from './carts.service';
-import { CreateCartDto } from './dto/create-cart.dto';
+import { FirebaseAuthGuard } from '../auth/guard/firebase-auth-guard';
 
-@Controller('carts')
+@Controller('cart')
+@UseGuards(FirebaseAuthGuard)
 export class CartsController {
   constructor(private readonly cartsService: CartsService) {}
 
-  @Get(':userId')
-  getCartByUserId(@Param('id', ParseIntPipe) id: number) {
-    return this.cartsService.getCartByUserId(id);
+  // Get the current user's cart
+  @Get()
+  async getCartByFirebaseUid(@Req() req) {
+    const firebaseUid = req.user.uid;
+    return this.cartsService.getCartByFirebaseUid(firebaseUid);
   }
 
+  // Create the user's cart
   @Post()
-  createCart(@Body() createCartDto: CreateCartDto) {
-    return this.cartsService.createCart(createCartDto);
+  async createCart(@Req() req) {
+    const firebaseUid = req.user.uid;
+    return this.cartsService.createCart(firebaseUid);
   }
 
-  @Delete(':userId')
-  deleteCart(@Param('id', ParseIntPipe) id: number) {
-    return this.cartsService.deleteCart(id);
+  // Delete the user's cart
+  @Delete()
+  async deleteCart(@Req() req) {
+    const firebaseUid = req.user.uid;
+    return this.cartsService.deleteCart(firebaseUid);
   }
 }

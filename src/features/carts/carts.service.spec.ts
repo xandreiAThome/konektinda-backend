@@ -13,6 +13,7 @@ jest.mock('database', () => ({
 
 describe('CartsService', () => {
   let service: CartsService;
+  let mockGetUserId: jest.SpyInstance | undefined;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -21,80 +22,137 @@ describe('CartsService', () => {
 
     service = module.get<CartsService>(CartsService);
     jest.resetAllMocks();
+    mockGetUserId = jest
+      .spyOn(service as any, 'getUserIdByFirebaseUid')
+      .mockResolvedValue(2);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  describe('getCartByUserId', () => {
-    const cart = { cart_id: 1, user_id: 2 };
-    it('should get a cart by user id', async () => {
+  const firebaseUid = 'abc';
+  const mockCart = { cart_id: 2, user_id: 2 };
+
+  describe('getCartByFirebaseUid', () => {
+    it('returns the cart', async () => {
       (db.select as jest.Mock).mockReturnValueOnce({
         from: jest.fn().mockReturnValueOnce({
-          where: jest.fn().mockResolvedValue([cart]),
+          where: jest.fn().mockResolvedValueOnce([mockCart]),
         }),
       });
 
-      const result = await service.getCartByUserId(2);
-      expect(result).toEqual(cart);
-      expect(db.select).toHaveBeenCalled();
-      expect(typeof result).toBe('object');
+      const result = await service.getCartByFirebaseUid(firebaseUid);
+
+      expect(mockGetUserId).toHaveBeenCalledWith('abc');
+      expect(result).toEqual(mockCart);
+      expect(db.select).toHaveBeenCalledTimes(1);
     });
 
-    it('should return a NotFoundException if user id is not found', async () => {
+    it('throws if cart not found', async () => {
       (db.select as jest.Mock).mockReturnValueOnce({
         from: jest.fn().mockReturnValueOnce({
-          where: jest.fn().mockResolvedValue([]),
+          where: jest.fn().mockResolvedValueOnce([]),
         }),
       });
 
-      await expect(service.getCartByUserId(-1)).rejects.toThrow(
+      await expect(service.getCartByFirebaseUid(firebaseUid)).rejects.toThrow(
         NotFoundException,
       );
+
+      expect(mockGetUserId).toHaveBeenCalledWith('abc');
+    });
+
+    it('propagates NotFound if user lookup fails', async () => {
+      const mockGetUserId = jest
+        .spyOn(service as any, 'getUserIdByFirebaseUid')
+        .mockRejectedValue(new NotFoundException('User not found'));
+
+      await expect(service.getCartByFirebaseUid(firebaseUid)).rejects.toThrow(
+        NotFoundException,
+      );
+
+      expect(mockGetUserId).toHaveBeenCalledWith('abc');
+      expect(db.select).not.toHaveBeenCalled();
     });
   });
 
   describe('createCart', () => {
-    it('should create a new cart', async () => {
+    it('creates a cart', async () => {
       (db.insert as jest.Mock).mockReturnValueOnce({
         values: jest.fn().mockReturnValueOnce({
-          returning: jest
-            .fn()
-            .mockResolvedValueOnce([{ cart_id: 2, user_id: 2 }]),
+          returning: jest.fn().mockResolvedValueOnce([mockCart]),
         }),
       });
 
-      const result = await service.createCart({ user_id: 2 });
-      expect(result).toEqual({ cart_id: 2, user_id: 2 });
-      expect(db.insert).toHaveBeenCalled();
+      const result = await service.createCart(firebaseUid);
+
+      expect(mockGetUserId).toHaveBeenCalledWith('abc');
+      expect(result).toEqual(mockCart);
+      expect(db.insert).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('deleteCart', () => {
-    it('should delete an existing cart', async () => {
+    it('deletes the cart', async () => {
       (db.delete as jest.Mock).mockReturnValueOnce({
         where: jest.fn().mockReturnValueOnce({
-          returning: jest
-            .fn()
-            .mockResolvedValueOnce([{ cart_id: 2, user_id: 2 }]),
+          returning: jest.fn().mockResolvedValueOnce([mockCart]),
         }),
       });
 
-      const result = await service.deleteCart(1);
+      const result = await service.deleteCart(firebaseUid);
 
+      expect(mockGetUserId).toHaveBeenCalledWith('abc');
       expect(result).toBeUndefined();
-      expect(db.delete).toHaveBeenCalled();
+      expect(db.delete).toHaveBeenCalledTimes(1);
     });
 
-    it('should throw a NotFoundException if user cart does not exist', async () => {
+    it('throws if cart not found', async () => {
       (db.delete as jest.Mock).mockReturnValueOnce({
         where: jest.fn().mockReturnValueOnce({
           returning: jest.fn().mockResolvedValueOnce([]),
         }),
       });
 
-      await expect(service.deleteCart).rejects.toThrow(NotFoundException);
+      await expect(service.deleteCart(firebaseUid)).rejects.toThrow(
+        NotFoundException,
+      );
+
+      expect(mockGetUserId).toHaveBeenCalledWith('abc');
+    });
+  });
+
+  describe('getUserIdByFirebaseUid (helper)', () => {
+    beforeEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    it('returns user_id', async () => {
+      (db.select as jest.Mock).mockReturnValueOnce({
+        from: jest.fn().mockReturnValueOnce({
+          where: jest.fn().mockResolvedValueOnce([{ user_id: 2 }]),
+        }),
+      });
+
+      const id = await (service as any).getUserIdByFirebaseUid('abc');
+      expect(id).toBe(2);
+    });
+
+    it('throws if user missing', async () => {
+      (db.select as jest.Mock).mockReturnValueOnce({
+        from: jest.fn().mockReturnValueOnce({
+          where: jest.fn().mockResolvedValueOnce([]),
+        }),
+      });
+
+      await expect(
+        (service as any).getUserIdByFirebaseUid('nope'),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 });
