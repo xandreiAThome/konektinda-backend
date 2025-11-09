@@ -20,8 +20,20 @@ export class ProductVariantsService {
 
   async getAllProductVariants(is_active?: boolean) {
     return db
-      .select()
+      .select({
+        variant: product_variants,
+        product: products,
+        category: product_categories,
+      })
       .from(product_variants)
+      .innerJoin(products, eq(product_variants.product_id, products.product_id))
+      .innerJoin(
+        product_categories,
+        eq(
+          products.product_category_id,
+          product_categories.product_category_id,
+        ),
+      )
       .where(
         is_active !== undefined
           ? eq(product_variants.is_active, is_active)
