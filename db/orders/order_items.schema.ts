@@ -1,6 +1,7 @@
 import { integer, pgTable, decimal } from 'drizzle-orm/pg-core';
 import { supplier_orders } from './supplier_orders.schema';
 import { product_variants } from '../products/product_variants.schema';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 
 export const order_items = pgTable('order_items', {
   order_item_id: integer('order_item_id')
@@ -16,3 +17,6 @@ export const order_items = pgTable('order_items', {
   unit_price: decimal('unit_price', { precision: 10, scale: 2, mode: 'number' }).notNull(),
   discount_applied: integer('discount_applied').notNull().default(0),
 });
+
+export type OrderItem = InferSelectModel<typeof order_items>;
+export type NewOrderItem = InferInsertModel<typeof order_items>;
