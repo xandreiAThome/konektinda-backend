@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { FirebaseService } from '../firebase/firebase.service';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -10,6 +11,11 @@ describe('AuthController', () => {
     const mockAuthService = {
       verifyFirebaseToken: jest.fn(),
       registerWithFirebase: jest.fn(),
+      loginOrRegister: jest.fn(),
+    };
+
+    const mockFirebaseService = {
+      verifyIdToken: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -18,6 +24,10 @@ describe('AuthController', () => {
         {
           provide: AuthService,
           useValue: mockAuthService,
+        },
+        {
+          provide: FirebaseService,
+          useValue: mockFirebaseService,
         },
       ],
     }).compile();
@@ -28,28 +38,21 @@ describe('AuthController', () => {
 
   it('should return user after successful firebase login', async () => {
     const mockIdToken = 'token123';
-    const mockDecoded = { uid: 'abc123', email: 'test@example.com' };
     const mockUser = { id: 1, email: 'test@example.com' };
 
-    (authService.verifyFirebaseToken as jest.Mock).mockResolvedValue(mockDecoded);
-    (authService.registerWithFirebase as jest.Mock).mockResolvedValue(mockUser);
+    (authService.loginOrRegister as jest.Mock).mockResolvedValue(mockUser);
 
-    const result = await controller.firebaseLogin(mockIdToken);
+    const result = await controller.googleAuth(mockIdToken);
 
-    expect(authService.verifyFirebaseToken).toHaveBeenCalledWith(mockIdToken);
-    expect(authService.registerWithFirebase).toHaveBeenCalledWith(mockDecoded);
-    expect(result).toEqual({
-      message: 'Authenticated successfully',
-      user: mockUser,
-    });
+    expect(authService.loginOrRegister).toHaveBeenCalledWith(mockIdToken);
+    expect(result).toEqual(mockUser);
   });
 
   it('should throw if verifyFirebaseToken fails', async () => {
-    (authService.verifyFirebaseToken as jest.Mock).mockRejectedValue(
+    (authService.loginOrRegister as jest.Mock).mockRejectedValue(
       new Error('Invalid Firebase token'),
     );
 
-    await expect(controller.firebaseLogin('bad-token')).rejects.toThrow('Invalid Firebase token');
-    expect(authService.registerWithFirebase).not.toHaveBeenCalled();
+    await expect(controller.googleAuth('bad-token')).rejects.toThrow('Invalid Firebase token');
   });
 });
