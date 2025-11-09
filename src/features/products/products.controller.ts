@@ -11,8 +11,8 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import type { CreateProductsDto } from './dto/createproducts.dto';
-import type { UpdateProductsDto } from './dto/updateprodcuts.dto';
+import { CreateProductsDto } from './dto/createproducts.dto';
+import { UpdateProductsDto } from './dto/updateprodcuts.dto';
 import { Product } from 'db/schema';
 
 @Controller('products')
