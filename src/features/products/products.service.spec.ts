@@ -3,7 +3,6 @@ import { ProductsService } from './products.service';
 import { NotFoundException } from '@nestjs/common';
 import { db } from 'database';
 import { products } from 'db/schema';
-import { eq } from 'drizzle-orm';
 import { CreateProductsDto } from './dto/createproducts.dto';
 
 jest.mock('database', () => ({

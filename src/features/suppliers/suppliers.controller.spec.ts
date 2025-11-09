@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SuppliersController } from './suppliers.controller';
 import { db } from 'database';
 import { SuppliersService } from './suppliers.service';
-import { Supplier } from 'interface/suppliers';
 import { mock } from 'node:test';
+import { Supplier } from 'db/schema';
 
 describe('SuppliersController', () => {
   let controller: SuppliersController;
