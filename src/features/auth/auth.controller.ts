@@ -13,10 +13,4 @@ export class AuthController {
   async googleAuth(@Body('idToken') idToken: string) {
     return this.authService.loginOrRegister(idToken);
   }
-
-  @Post('generate-token')
-  async generateToken() {
-    const token = await this.firebaseService.getAuth().createCustomToken('test-uid-123');
-    return { token };
-  }
 }
