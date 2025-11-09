@@ -15,6 +15,13 @@
       "when": 1762662934657,
       "tag": "0001_nebulous_cardiac",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1762691303314,
+      "tag": "0002_warm_angel",
+      "breakpoints": true
     }
   ]
 }
