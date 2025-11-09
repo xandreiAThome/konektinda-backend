@@ -23,7 +23,7 @@ services:
       dockerfile: Dockerfile
     container_name: konektinda_app_prod
     environment:
-      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:${DB_PORT:-5433}/${DB_NAME}
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
       PORT: ${APP_PORT}
       NODE_ENV: production
       # Firebase Admin SDK
