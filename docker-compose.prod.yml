@@ -40,7 +40,6 @@ services:
       postgres:
         condition: service_healthy
     restart: always
-    command: npm run start:prod
 
 volumes:
   postgres_data_prod:
