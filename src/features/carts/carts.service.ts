@@ -63,6 +63,15 @@ export class CartsService {
     }
   }
 
+  // FUNCTION FOR DEBUG ROUTE TO GET ALL CARTS
+  async getAllCarts(userId?: number) {
+    const allCarts = db.select().from(carts);
+    if (userId) {
+      allCarts.where(eq(carts.user_id, userId));
+    }
+    return allCarts;
+  }
+
   /*
   Cart Item functions below
   */

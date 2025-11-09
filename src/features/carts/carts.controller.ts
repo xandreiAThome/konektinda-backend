@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   Param,
   Body,
+  Query,
 } from '@nestjs/common';
 import { CartsService } from './carts.service';
 import { FirebaseAuthGuard } from '../auth/guard/firebase-auth-guard';
@@ -38,6 +39,13 @@ export class CartsController {
   deleteCart(@Req() req: AuthenticatedRequest) {
     const uid = req.user.uid;
     return this.cartsService.deleteCart(uid);
+  }
+
+  // DEBUG ROUTE TO GET ALL CARTS. CAN ALSO FILTER BY USER ID ?userId=xxx
+  @Get('/all')
+  @UseGuards()
+  getAllCarts(@Query('userId') userId?: number) {
+    return this.cartsService.getAllCarts(userId);
   }
 
   /*
