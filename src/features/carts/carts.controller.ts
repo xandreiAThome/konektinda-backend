@@ -1,6 +1,18 @@
-import { Controller, Get, Post, Delete, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Patch,
+  Post,
+  Delete,
+  Req,
+  UseGuards,
+  ParseIntPipe,
+  Param,
+  Body,
+} from '@nestjs/common';
 import { CartsService } from './carts.service';
 import { FirebaseAuthGuard } from '../auth/guard/firebase-auth-guard';
+import type { AuthenticatedRequest } from 'interface/auth_req';
 
 @Controller('cart')
 @UseGuards(FirebaseAuthGuard)
@@ -9,22 +21,70 @@ export class CartsController {
 
   // Get the current user's cart
   @Get()
-  async getCartByFirebaseUid(@Req() req) {
-    const firebaseUid = req.user.uid;
-    return this.cartsService.getCartByFirebaseUid(firebaseUid);
+  getCartByFirebaseUid(@Req() req: AuthenticatedRequest) {
+    const uid = req.user.uid;
+    return this.cartsService.getCartByFirebaseUid(uid);
   }
 
   // Create the user's cart
   @Post()
-  async createCart(@Req() req) {
-    const firebaseUid = req.user.uid;
-    return this.cartsService.createCart(firebaseUid);
+  createCart(@Req() req: AuthenticatedRequest) {
+    const uid = req.user.uid;
+    return this.cartsService.createCart(uid);
   }
 
   // Delete the user's cart
   @Delete()
-  async deleteCart(@Req() req) {
-    const firebaseUid = req.user.uid;
-    return this.cartsService.deleteCart(firebaseUid);
+  deleteCart(@Req() req: AuthenticatedRequest) {
+    const uid = req.user.uid;
+    return this.cartsService.deleteCart(uid);
+  }
+
+  /*
+   CART ITEM ROUTES BELOW
+  */
+
+  @Get('items')
+  getCartItems(@Req() req: AuthenticatedRequest) {
+    const uid = req.user.uid;
+    return this.cartsService.getCartItems(uid);
+  }
+
+  @Get('items/:productVariantId')
+  getCartItemById(
+    @Req() req: AuthenticatedRequest,
+    @Param('productVariantId', ParseIntPipe) productVariantId: number,
+  ) {
+    const uid = req.user.uid;
+    return this.cartsService.getCartItemByVariantId(uid, productVariantId);
+  }
+
+  @Post('items/:productVariantId')
+  createCartItem(
+    @Req() req: AuthenticatedRequest,
+    @Param('productVariantId', ParseIntPipe) productVariantId: number,
+    @Body('quantity', ParseIntPipe) quantity: number,
+  ) {
+    const uid = req.user.uid;
+    return this.cartsService.addCartItem(uid, productVariantId, quantity);
+  }
+
+  @Patch('items/:productVariantId')
+  updateCartItem(
+    @Req() req: AuthenticatedRequest,
+    @Param('productVariantId', ParseIntPipe) productVariantId: number,
+    @Body('quantity', ParseIntPipe) quantity?: number,
+  ) {
+    const uid = req.user.uid;
+    return this.cartsService.updateCartItem(uid, productVariantId, quantity);
+  }
+
+  @Delete('items/:productVariantId')
+  deleteCartItem(
+    @Req() req: AuthenticatedRequest,
+    @Param('productVariantId', ParseIntPipe) productVariantId: number,
+  ) {
+    const uid = req.user.uid;
+    return this.cartsService.deleteCartItem(uid, productVariantId);
   }
 }
