@@ -2,16 +2,17 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { db } from 'database';
 import { users } from 'db/schema';
-import { eq } from 'drizzle-orm';
-
-jest.mock('drizzle-orm', () => ({
-  eq: jest.fn((a, b) => `eq(${a}, ${b})`),
-}));
 
 jest.mock('database', () => ({
   db: {
     select: jest.fn(),
     insert: jest.fn(),
+    query: {
+      users: {
+        findMany: jest.fn(),
+        findFirst: jest.fn(),
+      },
+    },
   },
 }));
 
@@ -36,26 +37,22 @@ describe('UsersService', () => {
   });
 
   it('should return user when email is found', async () => {
-    const mockSelect = {
-      from: jest.fn().mockReturnThis(),
-      where: jest.fn().mockResolvedValue([mockUser]),
+    const mockUserWithRelations = {
+      ...mockUser,
+      addresses: [],
+      supplier: null,
     };
-    (db.select as jest.Mock).mockReturnValue(mockSelect);
+    
+    (db.query.users.findFirst as jest.Mock).mockResolvedValueOnce(mockUserWithRelations);
 
     const result = await service.findByEmail('test@example.com');
 
-    expect(db.select).toHaveBeenCalled();
-    expect(mockSelect.from).toHaveBeenCalledWith(users);
-    expect(eq).toHaveBeenCalledWith(users.email, 'test@example.com');
-    expect(result).toEqual(mockUser);
+    expect(db.query.users.findFirst).toHaveBeenCalled();
+    expect(result).toEqual(mockUserWithRelations);
   });
 
   it('should return undefined when email not found', async () => {
-    const mockSelect = {
-      from: jest.fn().mockReturnThis(),
-      where: jest.fn().mockResolvedValue([]),
-    };
-    (db.select as jest.Mock).mockReturnValue(mockSelect);
+    (db.query.users.findFirst as jest.Mock).mockResolvedValueOnce(undefined);
 
     const result = await service.findByEmail('notfound@example.com');
 
@@ -78,30 +75,34 @@ describe('UsersService', () => {
   });
 
   it('should return all users', async () => {
-    const mockSelect = {
-      from: jest.fn().mockResolvedValue([mockUser]),
-    };
-    (db.select as jest.Mock).mockReturnValue(mockSelect);
+    const mockUsersWithRelations = [
+      {
+        ...mockUser,
+        addresses: [],
+        supplier: null,
+      },
+    ];
+    
+    (db.query.users.findMany as jest.Mock).mockResolvedValueOnce(mockUsersWithRelations);
 
     const result = await service.findAll();
 
-    expect(db.select).toHaveBeenCalled();
-    expect(mockSelect.from).toHaveBeenCalledWith(users);
-    expect(result).toEqual([mockUser]);
+    expect(db.query.users.findMany).toHaveBeenCalled();
+    expect(result).toEqual(mockUsersWithRelations);
   });
 
   it('should return user by id', async () => {
-    const mockSelect = {
-      from: jest.fn().mockReturnThis(),
-      where: jest.fn().mockResolvedValue([mockUser]),
+    const mockUserWithRelations = {
+      ...mockUser,
+      addresses: [],
+      supplier: null,
     };
-    (db.select as jest.Mock).mockReturnValue(mockSelect);
+    
+    (db.query.users.findFirst as jest.Mock).mockResolvedValueOnce(mockUserWithRelations);
 
     const result = await service.findById(1);
 
-    expect(db.select).toHaveBeenCalled();
-    expect(mockSelect.from).toHaveBeenCalledWith(users);
-    expect(eq).toHaveBeenCalledWith(users.user_id, 1);
-    expect(result).toEqual(mockUser);
+    expect(db.query.users.findFirst).toHaveBeenCalled();
+    expect(result).toEqual(mockUserWithRelations);
   });
 });

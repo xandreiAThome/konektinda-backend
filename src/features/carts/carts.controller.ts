@@ -16,7 +16,7 @@ import { FirebaseAuthGuard } from '../auth/guard/firebase-auth-guard';
 import type { AuthenticatedRequest } from 'interface/auth_req';
 
 // TEMP HARCODED FIREBASE UID
-const uid = 'test-firebase-uid';
+const uid = process.env.FIREBASE_UID!;
 
 @Controller('cart')
 export class CartsController {
