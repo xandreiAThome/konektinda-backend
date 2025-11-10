@@ -27,14 +27,23 @@ export class OrdersService {
       userId !== undefined ? eq(orders.user_id, userId) : undefined,
     );
 
-    return db.select().from(orders).where(filter);
+    return db.query.orders.findMany({
+      where: filter,
+      with: {
+        user: true,
+        payment: true,
+      },
+    });
   }
 
   async getOrderById(id: number) {
-    const [order] = await db
-      .select()
-      .from(orders)
-      .where(eq(orders.order_id, id));
+    const order = await db.query.orders.findFirst({
+      where: eq(orders.order_id, id),
+      with: {
+        user: true,
+        payment: true,
+      },
+    });
 
     if (!order) {
       throw new NotFoundException(`Order with id ${id} not found.`);
