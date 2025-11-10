@@ -7,15 +7,25 @@ import { UpdateSupplierDto } from './dto/updatesupplier.dto';
 
 @Injectable()
 export class SuppliersService {
-  async getAllSuppliers(): Promise<Supplier[]> {
-    return db.select().from(suppliers);
+  async getAllSuppliers(): Promise<
+    Awaited<ReturnType<typeof db.query.suppliers.findMany>>
+  > {
+    return db.query.suppliers.findMany({
+      with: {
+        products: true,
+      },
+    });
   }
 
-  async getSupplierById(id: number): Promise<Supplier> {
-    const [supplier] = await db
-      .select()
-      .from(suppliers)
-      .where(eq(suppliers.supplier_id, id));
+  async getSupplierById(
+    id: number,
+  ): Promise<Awaited<ReturnType<typeof db.query.suppliers.findFirst>>> {
+    const supplier = await db.query.suppliers.findFirst({
+      where: eq(suppliers.supplier_id, id),
+      with: {
+        products: true,
+      },
+    });
 
     if (!supplier) {
       throw new NotFoundException(`Supplier with ID ${id} not found`);

@@ -8,7 +8,7 @@ import {
 import { users } from '../users/users.schema';
 import { payments } from '../payments/payments.schema';
 import { orderStatuses } from 'db/enums';
-import { InferSelectModel, InferInsertModel } from 'drizzle-orm';
+import { InferSelectModel, InferInsertModel, relations } from 'drizzle-orm';
 
 export const orders = pgTable('orders', {
   order_id: integer('order_id').primaryKey().generatedAlwaysAsIdentity(),
@@ -32,6 +32,17 @@ export const orders = pgTable('orders', {
   status: orderStatuses().notNull().default('PENDING'),
   order_date: timestamp('order_date').notNull().defaultNow(),
 });
+
+export const ordersRelations = relations(orders, ({ one }) => ({
+  user: one(users, {
+    fields: [orders.user_id],
+    references: [users.user_id],
+  }),
+  payment: one(payments, {
+    fields: [orders.payment_id],
+    references: [payments.ref_num],
+  }),
+}));
 
 export type Order = InferSelectModel<typeof orders>;
 export type NewOrder = InferInsertModel<typeof orders>;

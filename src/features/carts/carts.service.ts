@@ -64,15 +64,23 @@ export class CartsService {
   }
 
   // FUNCTION FOR DEBUG ROUTE TO GET ALL CARTS
-  async getAllCarts(userId?: number) {
-    const allCarts = db.select().from(carts);
-    if (userId) {
-      allCarts.where(eq(carts.user_id, userId));
-    }
-    return allCarts;
-  }
+  async getAllCarts(
+    userId?: number,
+  ): Promise<Awaited<ReturnType<typeof db.query.carts.findMany>>> {
+    const where = userId ? eq(carts.user_id, userId) : undefined;
 
-  /*
+    return db.query.carts.findMany({
+      where,
+      with: {
+        user: true,
+        items: {
+          with: {
+            variant: true,
+          },
+        },
+      },
+    });
+  } /*
   Cart Item functions below
   */
 

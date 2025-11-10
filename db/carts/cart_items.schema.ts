@@ -1,7 +1,7 @@
 import { integer, pgTable, decimal, timestamp } from 'drizzle-orm/pg-core';
 import { carts } from './carts.schema';
 import { product_variants } from '../products/product_variants.schema';
-import { InferSelectModel, InferInsertModel } from 'drizzle-orm';
+import { InferSelectModel, InferInsertModel, relations } from 'drizzle-orm';
 
 export const cart_items = pgTable('cart_items', {
   cart_item_id: integer('cart_item_id')
@@ -22,6 +22,17 @@ export const cart_items = pgTable('cart_items', {
   discount_applied: integer('discount_applied').notNull().default(0),
   date_priced: timestamp('date_priced').notNull().defaultNow(),
 });
+
+export const cart_itemsRelations = relations(cart_items, ({ one }) => ({
+  cart: one(carts, {
+    fields: [cart_items.cart_id],
+    references: [carts.cart_id],
+  }),
+  variant: one(product_variants, {
+    fields: [cart_items.product_variant_id],
+    references: [product_variants.product_variant_id],
+  }),
+}));
 
 export type CartItem = InferSelectModel<typeof cart_items>;
 export type NewCartItem = InferInsertModel<typeof cart_items>;
