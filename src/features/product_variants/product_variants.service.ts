@@ -18,7 +18,9 @@ export class ProductVariantsService {
     return newVariant;
   }
 
-  async getAllProductVariants(is_active?: boolean) {
+  async getAllProductVariants(
+    is_active?: boolean,
+  ): Promise<Awaited<ReturnType<typeof db.query.product_variants.findMany>>> {
     const where =
       is_active !== undefined
         ? eq(product_variants.is_active, is_active)
@@ -36,7 +38,10 @@ export class ProductVariantsService {
     });
   }
 
-  async getProductVariantById(id: number, is_active?: boolean) {
+  async getProductVariantById(
+    id: number,
+    is_active?: boolean,
+  ): Promise<Awaited<ReturnType<typeof db.query.product_variants.findFirst>>> {
     const where =
       is_active === undefined
         ? eq(product_variants.product_variant_id, id)

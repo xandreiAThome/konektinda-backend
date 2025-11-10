@@ -7,7 +7,9 @@ import { UpdateSupplierDto } from './dto/updatesupplier.dto';
 
 @Injectable()
 export class SuppliersService {
-  async getAllSuppliers(): Promise<any[]> {
+  async getAllSuppliers(): Promise<
+    Awaited<ReturnType<typeof db.query.suppliers.findMany>>
+  > {
     return db.query.suppliers.findMany({
       with: {
         products: true,
@@ -15,7 +17,9 @@ export class SuppliersService {
     });
   }
 
-  async getSupplierById(id: number): Promise<any> {
+  async getSupplierById(
+    id: number,
+  ): Promise<Awaited<ReturnType<typeof db.query.suppliers.findFirst>>> {
     const supplier = await db.query.suppliers.findFirst({
       where: eq(suppliers.supplier_id, id),
       with: {

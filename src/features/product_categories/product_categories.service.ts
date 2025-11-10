@@ -20,11 +20,17 @@ export class ProductCategoriesService {
     return newCategory;
   }
 
-  async getAllProductCategories() {
-    return db.select().from(product_categories);
+  async getAllProductCategories(): Promise<
+    Awaited<ReturnType<typeof db.query.product_categories.findMany>>
+  > {
+    return db.query.product_categories.findMany();
   }
 
-  async getProductCategoryById(id: number) {
+  async getProductCategoryById(
+    id: number,
+  ): Promise<
+    Awaited<ReturnType<typeof db.query.product_categories.findFirst>>
+  > {
     const category = await db.query.product_categories.findFirst({
       where: eq(product_categories.product_category_id, id),
     });
