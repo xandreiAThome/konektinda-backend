@@ -26,20 +26,11 @@ export class UsersService {
   }
 
   async updateUser(id: number, dto: UpdateUserDto): Promise<User> {
-    const cleanDto = Object.fromEntries(
-      Object.entries(dto).filter(([_, v]) => v !== undefined && v !== null)
-    );
-
-    if (Object.keys(cleanDto).length === 0) {
-      throw new Error('No values provided to update');
-    }
-
     const [user] = await db
       .update(users)
-      .set(cleanDto)
+      .set(dto)
       .where(eq(users.user_id, id))
       .returning();
-
     return user;
   }
 
