@@ -21,20 +21,34 @@ const money = (n: number) => Number(n.toFixed(2));
 
 @Injectable()
 export class OrdersService {
-  async getAllOrders(status?: OrderStatus, userId?: number) {
+  async getAllOrders(
+    status?: OrderStatus,
+    userId?: number,
+  ): Promise<Awaited<ReturnType<typeof db.query.orders.findMany>>> {
     const filter = and(
       status !== undefined ? eq(orders.status, status) : undefined,
       userId !== undefined ? eq(orders.user_id, userId) : undefined,
     );
 
-    return db.select().from(orders).where(filter);
+    return db.query.orders.findMany({
+      where: filter,
+      with: {
+        user: true,
+        payment: true,
+      },
+    });
   }
 
-  async getOrderById(id: number) {
-    const [order] = await db
-      .select()
-      .from(orders)
-      .where(eq(orders.order_id, id));
+  async getOrderById(
+    id: number,
+  ): Promise<Awaited<ReturnType<typeof db.query.orders.findFirst>>> {
+    const order = await db.query.orders.findFirst({
+      where: eq(orders.order_id, id),
+      with: {
+        user: true,
+        payment: true,
+      },
+    });
 
     if (!order) {
       throw new NotFoundException(`Order with id ${id} not found.`);

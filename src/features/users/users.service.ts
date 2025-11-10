@@ -5,9 +5,17 @@ import { eq } from 'drizzle-orm';
 
 @Injectable()
 export class UsersService {
-  async findByEmail(email: string): Promise<User | undefined> {
-    const result = await db.select().from(users).where(eq(users.email, email));
-    return result[0];
+  async findByEmail(
+    email: string,
+  ): Promise<Awaited<ReturnType<typeof db.query.users.findFirst>>> {
+    const result = await db.query.users.findFirst({
+      where: eq(users.email, email),
+      with: {
+        addresses: true,
+        supplier: true,
+      },
+    });
+    return result;
   }
 
   async createUser(data: NewUser): Promise<User> {
@@ -15,12 +23,26 @@ export class UsersService {
     return user;
   }
 
-  async findAll(): Promise<User[]> {
-    return db.select().from(users);
+  async findAll(): Promise<
+    Awaited<ReturnType<typeof db.query.users.findMany>>
+  > {
+    return db.query.users.findMany({
+      with: {
+        addresses: true,
+        supplier: true,
+      },
+    });
   }
 
-  async findById(id: number): Promise<User> {
-    const results = await db.select().from(users).where(eq(users.user_id, id));
-    return results[0];
+  async findById(
+    id: number,
+  ): Promise<Awaited<ReturnType<typeof db.query.users.findFirst>>> {
+    return db.query.users.findFirst({
+      where: eq(users.user_id, id),
+      with: {
+        addresses: true,
+        supplier: true,
+      },
+    });
   }
 }
