@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm';
 
 @Injectable()
 export class UsersService {
-  async findByEmail(email: string): Promise<any | undefined> {
+  async findByEmail(email: string): Promise<Awaited<ReturnType<typeof db.query.users.findFirst>>> {
     const result = await db.query.users.findFirst({
       where: eq(users.email, email),
       with: {
