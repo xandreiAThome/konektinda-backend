@@ -1,9 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SuppliersService } from './suppliers.service';
 import { db } from 'database'; // your Drizzle instance
+import { NotFoundException } from '@nestjs/common';
 
 jest.mock('database', () => ({
   db: {
+    query: {
+      suppliers: {
+        findMany: jest.fn(),
+        findFirst: jest.fn(),
+      },
+    },
     select: jest.fn(),
     insert: jest.fn(),
     update: jest.fn(),
@@ -30,35 +37,56 @@ describe('SuppliersService', () => {
   describe('getAllSuppliers', () => {
     it('should return an array of suppliers', async () => {
       const allSuppliers = [
-        { supplier_id: 1, supplier_name: 'Supplier A' },
-        { supplier_id: 2, supplier_name: 'Supplier B' },
+        {
+          supplier_id: 1,
+          supplier_name: 'Supplier A',
+          products: [{ product_id: 1, product_name: 'Product 1' }],
+        },
+        {
+          supplier_id: 2,
+          supplier_name: 'Supplier B',
+          products: [{ product_id: 2, product_name: 'Product 2' }],
+        },
       ];
 
-      (db.select as jest.Mock).mockReturnValueOnce({
-        from: jest.fn().mockResolvedValueOnce(allSuppliers),
-      });
+      (db.query.suppliers.findMany as jest.Mock).mockResolvedValueOnce(
+        allSuppliers,
+      );
 
       const results = await service.getAllSuppliers();
 
       expect(results).toEqual(allSuppliers);
-      expect(db.select).toHaveBeenCalled();
+      expect(db.query.suppliers.findMany).toHaveBeenCalled();
     });
   });
 
   describe('getSupplierById', () => {
     it('should return a supplier by id', async () => {
-      const supplier = { supplier_id: 1, supplier_name: 'Supplier A' };
+      const supplier = {
+        supplier_id: 1,
+        supplier_name: 'Supplier A',
+        products: [{ product_id: 1, product_name: 'Product 1' }],
+      };
 
-      (db.select as jest.Mock).mockReturnValueOnce({
-        from: jest.fn().mockReturnValueOnce({
-          where: jest.fn().mockResolvedValueOnce([supplier]),
-        }),
-      });
+      (db.query.suppliers.findFirst as jest.Mock).mockResolvedValueOnce(
+        supplier,
+      );
 
       const result = await service.getSupplierById(1);
 
       expect(result).toEqual(supplier);
-      expect(db.select).toHaveBeenCalled();
+      expect(db.query.suppliers.findFirst).toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException if supplier not found', async () => {
+      (db.query.suppliers.findFirst as jest.Mock).mockResolvedValueOnce(
+        undefined,
+      );
+
+      await expect(service.getSupplierById(999)).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(db.query.suppliers.findFirst).toHaveBeenCalled();
     });
   });
 
@@ -70,16 +98,18 @@ describe('SuppliersService', () => {
       };
       const newSupplier = { supplier_id: 3, ...dto };
 
-      (db.insert as jest.Mock).mockReturnValueOnce({
-        values: jest.fn().mockReturnValueOnce({
-          returning: jest.fn().mockResolvedValueOnce([newSupplier]),
-        }),
-      });
+      const mockChain = {
+        values: jest.fn().mockReturnThis(),
+        returning: jest.fn().mockResolvedValueOnce([newSupplier]),
+      };
+      (db.insert as jest.Mock).mockReturnValueOnce(mockChain);
 
       const result = await service.createSupplier(dto);
 
       expect(result).toEqual(newSupplier);
       expect(db.insert).toHaveBeenCalled();
+      expect(mockChain.values).toHaveBeenCalled();
+      expect(mockChain.returning).toHaveBeenCalled();
     });
   });
 
@@ -88,18 +118,35 @@ describe('SuppliersService', () => {
       const dto = { supplier_name: 'Supplier A Updated' };
       const updatedSupplier = { supplier_id: 1, ...dto };
 
-      (db.update as jest.Mock).mockReturnValueOnce({
-        set: jest.fn().mockReturnValueOnce({
-          where: jest.fn().mockReturnValueOnce({
-            returning: jest.fn().mockResolvedValueOnce([updatedSupplier]),
-          }),
-        }),
-      });
+      const mockChain = {
+        set: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        returning: jest.fn().mockResolvedValueOnce([updatedSupplier]),
+      };
+      (db.update as jest.Mock).mockReturnValueOnce(mockChain);
 
       const result = await service.updateSupplier(1, dto);
 
       expect(result).toEqual(updatedSupplier);
       expect(db.update).toHaveBeenCalled();
+      expect(mockChain.set).toHaveBeenCalled();
+      expect(mockChain.where).toHaveBeenCalled();
+      expect(mockChain.returning).toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException if supplier not found', async () => {
+      const dto = { supplier_name: 'Supplier A Updated' };
+
+      const mockChain = {
+        set: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        returning: jest.fn().mockResolvedValueOnce([]),
+      };
+      (db.update as jest.Mock).mockReturnValueOnce(mockChain);
+
+      await expect(service.updateSupplier(999, dto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -107,16 +154,30 @@ describe('SuppliersService', () => {
     it('should delete an existing supplier', async () => {
       const deletedSupplier = { supplier_id: 1, supplier_name: 'Supplier A' };
 
-      (db.delete as jest.Mock).mockReturnValueOnce({
-        where: jest.fn().mockReturnValueOnce({
-          returning: jest.fn().mockResolvedValueOnce([deletedSupplier]),
-        }),
-      });
+      const mockChain = {
+        where: jest.fn().mockReturnThis(),
+        returning: jest.fn().mockResolvedValueOnce([deletedSupplier]),
+      };
+      (db.delete as jest.Mock).mockReturnValueOnce(mockChain);
 
       const result = await service.deleteSupplier(1);
 
       expect(result).toBeUndefined();
       expect(db.delete).toHaveBeenCalled();
+      expect(mockChain.where).toHaveBeenCalled();
+      expect(mockChain.returning).toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException if supplier not found', async () => {
+      const mockChain = {
+        where: jest.fn().mockReturnThis(),
+        returning: jest.fn().mockResolvedValueOnce([]),
+      };
+      (db.delete as jest.Mock).mockReturnValueOnce(mockChain);
+
+      await expect(service.deleteSupplier(999)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

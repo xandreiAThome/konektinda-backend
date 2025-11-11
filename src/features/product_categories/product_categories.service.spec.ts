@@ -7,12 +7,18 @@ import { NotFoundException } from '@nestjs/common';
 // Mock needed drizzle functions
 jest.mock('database', () => ({
   db: {
+    query: {
+      product_categories: {
+        findMany: jest.fn(),
+        findFirst: jest.fn(),
+      },
+    },
     select: jest.fn(),
     insert: jest.fn(),
     update: jest.fn(),
-    delete: jest.fn()
-  }
-}))
+    delete: jest.fn(),
+  },
+}));
 
 describe('ProductCategoriesService', () => {
   let service: ProductCategoriesService;
@@ -33,129 +39,151 @@ describe('ProductCategoriesService', () => {
   describe('getAllProductCategories', () => {
     it('should return all product categories', async () => {
       const allProductCategories = [
-        { product_category_id: 1, category_name: "Meat"},
-        { product_category_id: 2, category_name: "Vegetables"},
-        { product_category_id: 3, category_name: "Fruits"},
+        { product_category_id: 1, category_name: 'Meat' },
+        { product_category_id: 2, category_name: 'Vegetables' },
+        { product_category_id: 3, category_name: 'Fruits' },
       ];
 
-      (db.select as jest.Mock).mockReturnValue({
-        from: jest.fn().mockResolvedValue(allProductCategories)
-      });
+      (
+        db.query.product_categories.findMany as jest.Mock
+      ).mockResolvedValueOnce(allProductCategories);
+
       const results = await service.getAllProductCategories();
-      
+
       expect(results).toEqual(allProductCategories);
-      expect(db.select).toHaveBeenCalled();
-    })
-  })
+      expect(db.query.product_categories.findMany).toHaveBeenCalled();
+    });
+  });
 
   describe('getProductCategoryById', () => {
     it('should return a product category by id', async () => {
-      const category = { product_category_id: 2, category_name: "Vegetables"};
+      const category = {
+        product_category_id: 2,
+        category_name: 'Vegetables',
+      };
 
-      (db.select as jest.Mock).mockReturnValue({
-        from: jest.fn().mockReturnValueOnce({
-          where: jest.fn().mockResolvedValueOnce([category])
-        })
-      });
+      (
+        db.query.product_categories.findFirst as jest.Mock
+      ).mockResolvedValueOnce(category);
 
       const result = await service.getProductCategoryById(2);
 
       expect(result).toEqual(category);
-      expect(db.select).toHaveBeenCalled();
-    })
+      expect(db.query.product_categories.findFirst).toHaveBeenCalled();
+    });
 
     it('returns NotFoundException if category id does not exist', async () => {
-      (db.select as jest.Mock).mockReturnValue({
-        from: jest.fn().mockReturnValueOnce({
-          where: jest.fn().mockResolvedValueOnce([])
-        })
-      });
+      (
+        db.query.product_categories.findFirst as jest.Mock
+      ).mockResolvedValueOnce(undefined);
 
-      await expect(service.getProductCategoryById(-1))
-      .rejects
-      .toThrow(NotFoundException);
-    })
-  })
+      await expect(
+        service.getProductCategoryById(-1),
+      ).rejects.toThrow(NotFoundException);
+      expect(db.query.product_categories.findFirst).toHaveBeenCalled();
+    });
+  });
 
   describe('createProductCategory', () => {
     it('creates a new product category', async () => {
       const categoryName = {
-        category_name: 'Hulk Hogan'
+        category_name: 'Hulk Hogan',
       };
-      const newProductCategory = { 
-        product_category_id: 5, 
-        category_name: categoryName 
+      const newProductCategory = {
+        product_category_id: 5,
+        category_name: 'Hulk Hogan',
       };
 
-      (db.insert as jest.Mock).mockReturnValueOnce({
-        values: jest.fn().mockReturnValueOnce({
-          returning: jest.fn().mockResolvedValueOnce([newProductCategory])
-        })
-      });
+      const mockChain = {
+        values: jest.fn().mockReturnThis(),
+        returning: jest.fn().mockResolvedValueOnce([newProductCategory]),
+      };
+      (db.insert as jest.Mock).mockReturnValueOnce(mockChain);
 
       const result = await service.createProductCategory(categoryName);
 
       expect(result).toEqual(newProductCategory);
       expect(db.insert).toHaveBeenCalled();
-
-    })   
-  })
+      expect(mockChain.values).toHaveBeenCalled();
+      expect(mockChain.returning).toHaveBeenCalled();
+    });
+  });
 
   describe('updateProductCategory', () => {
     it('should update an existing product category', async () => {
-      const newName =  {
-        category_name: 'John Cena'
+      const newName = {
+        category_name: 'John Cena',
       };
-      const updatedCategory = { product_category_id: 2, newName };
+      const updatedCategory = {
+        product_category_id: 2,
+        category_name: 'John Cena',
+      };
 
-      (db.update as jest.Mock).mockReturnValueOnce({
-        set: jest.fn().mockReturnValueOnce({
-          where: jest.fn().mockReturnValueOnce({
-            returning: jest.fn().mockResolvedValueOnce([updatedCategory])
-          })
-        })
-      });
+      const mockChain = {
+        set: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        returning: jest.fn().mockResolvedValueOnce([updatedCategory]),
+      };
+      (db.update as jest.Mock).mockReturnValueOnce(mockChain);
 
       const result = await service.updateProductCategory(2, newName);
 
       expect(result).toEqual(updatedCategory);
       expect(db.update).toHaveBeenCalled();
-
-    }) 
+      expect(mockChain.set).toHaveBeenCalled();
+      expect(mockChain.where).toHaveBeenCalled();
+      expect(mockChain.returning).toHaveBeenCalled();
+    });
 
     it('should throw a NotFoundException if category id does not exist', async () => {
-      (db.update as jest.Mock).mockReturnValueOnce({
-        set: jest.fn().mockReturnValueOnce({
-          where: jest.fn().mockReturnValueOnce({
-            returning: jest.fn().mockResolvedValueOnce([])
-          })
-        })
-      });
+      const newName = {
+        category_name: 'John Cena',
+      };
 
-      await expect(service.updateProductCategory)
-      .rejects
-      .toThrow(NotFoundException);
-    })
-  })
+      const mockChain = {
+        set: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        returning: jest.fn().mockResolvedValueOnce([]),
+      };
+      (db.update as jest.Mock).mockReturnValueOnce(mockChain);
+
+      await expect(
+        service.updateProductCategory(-1, newName),
+      ).rejects.toThrow(NotFoundException);
+    });
+  });
 
   describe('deleteProductCategory', () => {
     it('should delete an existing product category', async () => {
       const deletedCategory = {
         product_category_id: 1,
-        category_name: 'Randy Orton'
+        category_name: 'Randy Orton',
       };
 
-      (db.delete as jest.Mock).mockReturnValueOnce({
-        where: jest.fn().mockReturnValueOnce({
-          returning: jest.fn().mockResolvedValueOnce([deletedCategory])
-        })
-      });
+      const mockChain = {
+        where: jest.fn().mockReturnThis(),
+        returning: jest.fn().mockResolvedValueOnce([deletedCategory]),
+      };
+      (db.delete as jest.Mock).mockReturnValueOnce(mockChain);
 
       const result = await service.deleteProductCategory(1);
-      
+
       expect(result).toBeUndefined();
       expect(db.delete).toHaveBeenCalled();
-    })
-    
-  })
+      expect(mockChain.where).toHaveBeenCalled();
+      expect(mockChain.returning).toHaveBeenCalled();
+    });
+
+    it('should throw a NotFoundException if category id does not exist', async () => {
+      const mockChain = {
+        where: jest.fn().mockReturnThis(),
+        returning: jest.fn().mockResolvedValueOnce([]),
+      };
+      (db.delete as jest.Mock).mockReturnValueOnce(mockChain);
+
+      await expect(service.deleteProductCategory(-1)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+  });
 });
