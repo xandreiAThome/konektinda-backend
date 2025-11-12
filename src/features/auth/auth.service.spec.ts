@@ -66,7 +66,12 @@ describe('AuthService', () => {
 
   describe('registerWithFirebase', () => {
     it('should return existing user if found', async () => {
-      const decoded = { uid: '1', email: 'a@b.com', name: 'John Doe', picture: 'pic.jpg' };
+      const decoded = {
+        uid: '1',
+        email: 'a@b.com',
+        name: 'John Doe',
+        picture: 'pic.jpg',
+      };
       const existingUser = { id: 1, email: 'a@b.com' };
       (usersService.findByEmail as jest.Mock).mockResolvedValue(existingUser);
 

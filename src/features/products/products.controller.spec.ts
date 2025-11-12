@@ -54,17 +54,30 @@ describe('ProductsController', () => {
     });
 
     it('should throw NotFoundException if product not found', async () => {
-      mockProductsService.getSingleProduct.mockRejectedValue(new NotFoundException());
+      mockProductsService.getSingleProduct.mockRejectedValue(
+        new NotFoundException(),
+      );
 
-      await expect(controller.getSingleProduct(999)).rejects.toThrow(NotFoundException);
+      await expect(controller.getSingleProduct(999)).rejects.toThrow(
+        NotFoundException,
+      );
       expect(mockProductsService.getSingleProduct).toHaveBeenCalledWith(999);
     });
   });
 
   describe('createProduct', () => {
     it('should create and return a product', async () => {
-      const dto = { product_category_id: 1, supplier_id: 2, product_name: 'New Product' };
-      const createdProduct = { product_id: 1, ...dto, product_description: '', is_active: true };
+      const dto = {
+        product_category_id: 1,
+        supplier_id: 2,
+        product_name: 'New Product',
+      };
+      const createdProduct = {
+        product_id: 1,
+        ...dto,
+        product_description: '',
+        is_active: true,
+      };
       mockProductsService.createProduct.mockResolvedValue(createdProduct);
 
       const result = await controller.createProduct(dto);
@@ -86,9 +99,13 @@ describe('ProductsController', () => {
 
     it('should throw NotFoundException if product not found', async () => {
       const dto = { product_name: 'Updated Name' };
-      mockProductsService.updateProduct.mockRejectedValue(new NotFoundException());
+      mockProductsService.updateProduct.mockRejectedValue(
+        new NotFoundException(),
+      );
 
-      await expect(controller.updateProduct(999, dto)).rejects.toThrow(NotFoundException);
+      await expect(controller.updateProduct(999, dto)).rejects.toThrow(
+        NotFoundException,
+      );
       expect(mockProductsService.updateProduct).toHaveBeenCalledWith(999, dto);
     });
   });
@@ -103,9 +120,13 @@ describe('ProductsController', () => {
     });
 
     it('should throw NotFoundException if product not found', async () => {
-      mockProductsService.deleteProduct.mockRejectedValue(new NotFoundException());
+      mockProductsService.deleteProduct.mockRejectedValue(
+        new NotFoundException(),
+      );
 
-      await expect(controller.deleteProduct(999)).rejects.toThrow(NotFoundException);
+      await expect(controller.deleteProduct(999)).rejects.toThrow(
+        NotFoundException,
+      );
       expect(mockProductsService.deleteProduct).toHaveBeenCalledWith(999);
     });
   });

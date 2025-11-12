@@ -42,8 +42,10 @@ describe('UsersService', () => {
       addresses: [],
       supplier: null,
     };
-    
-    (db.query.users.findFirst as jest.Mock).mockResolvedValueOnce(mockUserWithRelations);
+
+    (db.query.users.findFirst as jest.Mock).mockResolvedValueOnce(
+      mockUserWithRelations,
+    );
 
     const result = await service.findByEmail('test@example.com');
 
@@ -82,8 +84,10 @@ describe('UsersService', () => {
         supplier: null,
       },
     ];
-    
-    (db.query.users.findMany as jest.Mock).mockResolvedValueOnce(mockUsersWithRelations);
+
+    (db.query.users.findMany as jest.Mock).mockResolvedValueOnce(
+      mockUsersWithRelations,
+    );
 
     const result = await service.findAll();
 
@@ -97,8 +101,10 @@ describe('UsersService', () => {
       addresses: [],
       supplier: null,
     };
-    
-    (db.query.users.findFirst as jest.Mock).mockResolvedValueOnce(mockUserWithRelations);
+
+    (db.query.users.findFirst as jest.Mock).mockResolvedValueOnce(
+      mockUserWithRelations,
+    );
 
     const result = await service.findById(1);
 

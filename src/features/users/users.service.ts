@@ -56,9 +56,8 @@ export class UsersService {
     return user;
   }
 
-  async deleteUser(id: number): Promise<String> {
+  async deleteUser(id: number): Promise<string> {
     await db.delete(users).where(eq(users.user_id, id));
     return `User with id ${id} has been deleted.`;
   }
-
 }

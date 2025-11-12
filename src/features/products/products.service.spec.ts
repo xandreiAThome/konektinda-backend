@@ -117,7 +117,9 @@ describe('ProductsService (Drizzle ORM)', () => {
       };
       (db.update as jest.Mock).mockReturnValueOnce(mockChain);
 
-      const result = await service.updateProduct(1, { product_name: 'Updated' });
+      const result = await service.updateProduct(1, {
+        product_name: 'Updated',
+      });
       expect(result).toEqual(updatedProduct);
       expect(db.update).toHaveBeenCalled();
       expect(mockChain.set).toHaveBeenCalled();

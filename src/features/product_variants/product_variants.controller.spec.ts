@@ -3,14 +3,13 @@ import { ProductVariantsController } from './product_variants.controller';
 import { ProductVariantsService } from './product_variants.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 
-
 const mockService = {
   getAllProductVariants: jest.fn(),
   getProductVariantById: jest.fn(),
   createProductVariant: jest.fn(),
   updateProductVariant: jest.fn(),
-  deleteProductVariant: jest.fn()
-}
+  deleteProductVariant: jest.fn(),
+};
 
 describe('ProductVariantsController', () => {
   let controller: ProductVariantsController;
@@ -18,14 +17,18 @@ describe('ProductVariantsController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ProductVariantsController],
-      providers: [{
-        provide: ProductVariantsService,
-        useValue: mockService
-      }]
+      providers: [
+        {
+          provide: ProductVariantsService,
+          useValue: mockService,
+        },
+      ],
     }).compile();
 
-    controller = module.get<ProductVariantsController>(ProductVariantsController);
-    jest.clearAllMocks(); 
+    controller = module.get<ProductVariantsController>(
+      ProductVariantsController,
+    );
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -72,7 +75,6 @@ describe('ProductVariantsController', () => {
     });
   });
 
-
   // Constant product variant used in tests below
   const valid = {
     product_variant_id: 1,
@@ -115,9 +117,9 @@ describe('ProductVariantsController', () => {
         new NotFoundException('Product variant not found.'),
       );
 
-      await expect(
-        controller.getProductVariantById(-1),
-      ).rejects.toThrow(new NotFoundException('Product variant not found.'));
+      await expect(controller.getProductVariantById(-1)).rejects.toThrow(
+        new NotFoundException('Product variant not found.'),
+      );
     });
   });
 
@@ -174,9 +176,9 @@ describe('ProductVariantsController', () => {
         new NotFoundException('Product variant not found.'),
       );
 
-      await expect(
-        controller.updateProductVariant(-1, update),
-      ).rejects.toThrow(new NotFoundException('Product variant not found.'));
+      await expect(controller.updateProductVariant(-1, update)).rejects.toThrow(
+        new NotFoundException('Product variant not found.'),
+      );
     });
   });
 
@@ -199,5 +201,4 @@ describe('ProductVariantsController', () => {
       );
     });
   });
-
 });

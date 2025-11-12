@@ -70,7 +70,10 @@ describe('OrdersController', () => {
       mockService.getAllOrders.mockResolvedValue(allOrders);
       const res = await controller.getAllOrders();
       expect(res).toEqual(allOrders);
-      expect(mockService.getAllOrders).toHaveBeenCalledWith(undefined, undefined);
+      expect(mockService.getAllOrders).toHaveBeenCalledWith(
+        undefined,
+        undefined,
+      );
     });
 
     it('should return filtered orders by status', async () => {
@@ -94,7 +97,10 @@ describe('OrdersController', () => {
       mockService.getAllOrders.mockResolvedValue(filteredOrders);
       const res = await controller.getAllOrders(OrderStatus.PENDING);
       expect(res).toEqual(filteredOrders);
-      expect(mockService.getAllOrders).toHaveBeenCalledWith(OrderStatus.PENDING, undefined);
+      expect(mockService.getAllOrders).toHaveBeenCalledWith(
+        OrderStatus.PENDING,
+        undefined,
+      );
     });
 
     it('should return filtered orders by userId', async () => {

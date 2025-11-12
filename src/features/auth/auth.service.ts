@@ -46,11 +46,10 @@ export class AuthService {
     return this.usersService.createUser(newUser);
   }
 
-
   async loginOrRegister(idToken: string) {
     const decodedToken = await this.verifyFirebaseToken(idToken);
     const user = await this.registerWithFirebase(decodedToken);
-    
+
     return {
       message: 'Authenticated successfully',
       user,

@@ -3,7 +3,6 @@ import { ProductCategoriesService } from './product_categories.service';
 import { db } from 'database';
 import { NotFoundException } from '@nestjs/common';
 
-
 // Mock needed drizzle functions
 jest.mock('database', () => ({
   db: {
@@ -44,9 +43,9 @@ describe('ProductCategoriesService', () => {
         { product_category_id: 3, category_name: 'Fruits' },
       ];
 
-      (
-        db.query.product_categories.findMany as jest.Mock
-      ).mockResolvedValueOnce(allProductCategories);
+      (db.query.product_categories.findMany as jest.Mock).mockResolvedValueOnce(
+        allProductCategories,
+      );
 
       const results = await service.getAllProductCategories();
 
@@ -77,9 +76,9 @@ describe('ProductCategoriesService', () => {
         db.query.product_categories.findFirst as jest.Mock
       ).mockResolvedValueOnce(undefined);
 
-      await expect(
-        service.getProductCategoryById(-1),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getProductCategoryById(-1)).rejects.toThrow(
+        NotFoundException,
+      );
       expect(db.query.product_categories.findFirst).toHaveBeenCalled();
     });
   });
@@ -147,9 +146,9 @@ describe('ProductCategoriesService', () => {
       };
       (db.update as jest.Mock).mockReturnValueOnce(mockChain);
 
-      await expect(
-        service.updateProductCategory(-1, newName),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.updateProductCategory(-1, newName)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
