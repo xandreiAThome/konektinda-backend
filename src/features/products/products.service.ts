@@ -21,7 +21,7 @@ export class ProductsService {
     return newProduct;
   }
 
-  async getAllProducts(): Promise<any[]> {
+  async getAllProducts(): Promise<Product[]> {
     // Use relational query to fetch products with their category and variants
     const result = await db.query.products.findMany({
       with: {
@@ -33,7 +33,7 @@ export class ProductsService {
     return result;
   }
 
-  async getSingleProduct(id: number): Promise<any> {
+  async getSingleProduct(id: number): Promise<Product> {
     // Use relational query to fetch a single product with its category and variants
     const result = await db.query.products.findFirst({
       where: eq(products.product_id, id),
