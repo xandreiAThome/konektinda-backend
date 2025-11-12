@@ -9,14 +9,10 @@ describe('AuthController', () => {
 
   beforeEach(async () => {
     const mockAuthService = {
-      verifyFirebaseToken: jest.fn(),
-      registerWithFirebase: jest.fn(),
       loginOrRegister: jest.fn(),
     };
 
-    const mockFirebaseService = {
-      verifyIdToken: jest.fn(),
-    };
+    const mockFirebaseService = {};
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
@@ -36,25 +32,30 @@ describe('AuthController', () => {
     authService = module.get<AuthService>(AuthService);
   });
 
-  it('should return user after successful firebase login', async () => {
-    const mockIdToken = 'token123';
-    const mockUser = { id: 1, email: 'test@example.com' };
+  describe('googleAuth', () => {
+    it('should return authentication result', async () => {
+      const mockIdToken = 'token123';
+      const mockResult = {
+        message: 'Authenticated successfully',
+        user: { id: 1, email: 'test@example.com' },
+        provider: 'google.com',
+      };
 
-    (authService.loginOrRegister as jest.Mock).mockResolvedValue(mockUser);
+      (authService.loginOrRegister as jest.Mock).mockResolvedValue(mockResult);
 
-    const result = await controller.googleAuth(mockIdToken);
+      const result = await controller.googleAuth(mockIdToken);
 
-    expect(authService.loginOrRegister).toHaveBeenCalledWith(mockIdToken);
-    expect(result).toEqual(mockUser);
-  });
+      expect(authService.loginOrRegister).toHaveBeenCalledWith(mockIdToken);
+      expect(result).toEqual(mockResult);
+    });
 
-  it('should throw if verifyFirebaseToken fails', async () => {
-    (authService.loginOrRegister as jest.Mock).mockRejectedValue(
-      new Error('Invalid Firebase token'),
-    );
+    it('should throw error when authentication fails', async () => {
+      const error = new Error('Invalid Firebase token');
+      (authService.loginOrRegister as jest.Mock).mockRejectedValue(error);
 
-    await expect(controller.googleAuth('bad-token')).rejects.toThrow(
-      'Invalid Firebase token',
-    );
+      await expect(controller.googleAuth('bad-token')).rejects.toThrow(
+        'Invalid Firebase token',
+      );
+    });
   });
 });
