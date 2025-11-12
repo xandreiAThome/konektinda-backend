@@ -82,12 +82,13 @@ describe('AuthService', () => {
       expect(result).toBe(existingUser);
     });
 
-    it('should create new user if not found', async () => {
+    it('should create new user with all fields', async () => {
       const decoded = {
         uid: '2',
         email: 'new@b.com',
         name: 'Jane Doe',
         picture: 'pic2.jpg',
+        email_verified: true,
       };
       const createdUser = { id: 2, email: 'new@b.com' };
 
@@ -96,20 +97,27 @@ describe('AuthService', () => {
 
       const result = await service.registerWithFirebase(decoded);
 
-      expect(usersService.createUser).toHaveBeenCalledWith(
-        expect.objectContaining({
-          email: 'new@b.com',
-          first_name: 'Jane',
-          last_name: 'Doe',
-          profile_picture_url: 'pic2.jpg',
-          username: 'new',
-        }),
-      );
+      expect(usersService.createUser).toHaveBeenCalledWith({
+        firebase_uid: '2',
+        first_name: 'Jane',
+        last_name: 'Doe',
+        email: 'new@b.com',
+        username: 'new',
+        password_hash: null,
+        phone_number: null,
+        email_verified: true,
+        role: 'CONSUMER',
+        profile_picture_url: 'pic2.jpg',
+      });
       expect(result).toBe(createdUser);
     });
 
-    it('should handle missing name or picture gracefully', async () => {
-      const decoded = { uid: '3', email: 'noinfo@b.com' };
+    it('should handle missing name or picture', async () => {
+      const decoded = {
+        uid: '3',
+        email: 'noinfo@b.com',
+        email_verified: false,
+      };
       const createdUser = { id: 3, email: 'noinfo@b.com' };
 
       (usersService.findByEmail as jest.Mock).mockResolvedValue(null);
@@ -117,14 +125,62 @@ describe('AuthService', () => {
 
       const result = await service.registerWithFirebase(decoded);
 
-      expect(usersService.createUser).toHaveBeenCalledWith(
-        expect.objectContaining({
-          first_name: 'User',
-          last_name: '',
-          profile_picture_url: '',
-        }),
-      );
+      expect(usersService.createUser).toHaveBeenCalledWith({
+        firebase_uid: '3',
+        first_name: 'User',
+        last_name: '',
+        email: 'noinfo@b.com',
+        username: 'noinfo',
+        password_hash: null,
+        phone_number: null,
+        email_verified: false,
+        role: 'CONSUMER',
+        profile_picture_url: '',
+      });
       expect(result).toBe(createdUser);
+    });
+  });
+
+  describe('loginOrRegister', () => {
+    it('should authenticate and return user with provider', async () => {
+      const mockIdToken = 'token123';
+      const mockDecoded = {
+        uid: 'abc',
+        email: 'test@example.com',
+        name: 'Test User',
+        email_verified: true,
+        firebase: {
+          sign_in_provider: 'google.com',
+        },
+      };
+      const mockUser = {
+        id: 1,
+        email: 'test@example.com',
+        first_name: 'Test',
+        last_name: 'User',
+      };
+
+      mockFirebaseAuth.verifyIdToken.mockResolvedValue(mockDecoded);
+      (usersService.findByEmail as jest.Mock).mockResolvedValue(mockUser);
+
+      const result = await service.loginOrRegister(mockIdToken);
+
+      expect(result).toEqual({
+        message: 'Authenticated successfully',
+        user: mockUser,
+        provider: 'google.com',
+      });
+    });
+
+    it('should throw UnauthorizedException on invalid token', async () => {
+      const mockIdToken = 'invalid_token';
+      mockFirebaseAuth.verifyIdToken.mockRejectedValue(
+        new Error('Invalid token'),
+      );
+
+      await expect(service.loginOrRegister(mockIdToken)).rejects.toThrow(
+        new UnauthorizedException('Invalid Firebase token'),
+      );
     });
   });
 });
