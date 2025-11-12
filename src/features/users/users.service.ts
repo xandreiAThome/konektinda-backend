@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { db } from 'database';
 import { NewUser, User, users } from 'db/schema';
 import { eq } from 'drizzle-orm';
+import { UpdateUserDto } from './dto/updateuser.dto';
 
 @Injectable()
 export class UsersService {
@@ -44,5 +45,19 @@ export class UsersService {
         supplier: true,
       },
     });
+  }
+
+  async updateUser(id: number, dto: UpdateUserDto): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set(dto)
+      .where(eq(users.user_id, id))
+      .returning();
+    return user;
+  }
+
+  async deleteUser(id: number): Promise<string> {
+    await db.delete(users).where(eq(users.user_id, id));
+    return `User with id ${id} has been deleted.`;
   }
 }

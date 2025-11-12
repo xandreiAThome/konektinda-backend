@@ -1,4 +1,10 @@
-import { IsInt, IsString, IsBoolean, IsOptional, MaxLength } from 'class-validator';
+import {
+  IsInt,
+  IsString,
+  IsBoolean,
+  IsOptional,
+  MaxLength,
+} from 'class-validator';
 
 export class CreateProductsDto {
   @IsInt()
@@ -18,5 +24,5 @@ export class CreateProductsDto {
 
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean; 
+  is_active?: boolean;
 }

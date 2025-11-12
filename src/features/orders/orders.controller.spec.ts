@@ -49,6 +49,8 @@ describe('OrdersController', () => {
           barangay: 'Barangay 709',
           zip_code: '1000',
           payment_id: 'ABCD',
+          user: { user_id: 1, email: 'test@example.com' },
+          payment: { payment_id: 'ABCD' },
         },
         {
           order_id: 2,
@@ -60,13 +62,68 @@ describe('OrdersController', () => {
           barangay: 'Barangay 700',
           zip_code: '1000',
           payment_id: 'BCDA',
+          user: { user_id: 1, email: 'test@example.com' },
+          payment: { payment_id: 'BCDA' },
         },
       ];
 
       mockService.getAllOrders.mockResolvedValue(allOrders);
       const res = await controller.getAllOrders();
       expect(res).toEqual(allOrders);
-      expect(mockService.getAllOrders).toHaveBeenCalledTimes(1);
+      expect(mockService.getAllOrders).toHaveBeenCalledWith(
+        undefined,
+        undefined,
+      );
+    });
+
+    it('should return filtered orders by status', async () => {
+      const filteredOrders = [
+        {
+          order_id: 1,
+          user_id: 1,
+          grand_total: 50.99,
+          region: 'NCR',
+          province: 'Manila',
+          city: 'Manila',
+          barangay: 'Barangay 709',
+          zip_code: '1000',
+          payment_id: 'ABCD',
+          status: OrderStatus.PENDING,
+          user: { user_id: 1, email: 'test@example.com' },
+          payment: { payment_id: 'ABCD' },
+        },
+      ];
+
+      mockService.getAllOrders.mockResolvedValue(filteredOrders);
+      const res = await controller.getAllOrders(OrderStatus.PENDING);
+      expect(res).toEqual(filteredOrders);
+      expect(mockService.getAllOrders).toHaveBeenCalledWith(
+        OrderStatus.PENDING,
+        undefined,
+      );
+    });
+
+    it('should return filtered orders by userId', async () => {
+      const filteredOrders = [
+        {
+          order_id: 1,
+          user_id: 2,
+          grand_total: 50.99,
+          region: 'NCR',
+          province: 'Manila',
+          city: 'Manila',
+          barangay: 'Barangay 709',
+          zip_code: '1000',
+          payment_id: 'ABCD',
+          user: { user_id: 2, email: 'user2@example.com' },
+          payment: { payment_id: 'ABCD' },
+        },
+      ];
+
+      mockService.getAllOrders.mockResolvedValue(filteredOrders);
+      const res = await controller.getAllOrders(undefined, 2);
+      expect(res).toEqual(filteredOrders);
+      expect(mockService.getAllOrders).toHaveBeenCalledWith(undefined, 2);
     });
   });
 
@@ -81,6 +138,8 @@ describe('OrdersController', () => {
     barangay: 'Barangay 709',
     zip_code: '1000',
     payment_id: 'ABCD',
+    user: { user_id: 1, email: 'test@example.com' },
+    payment: { payment_id: 'ABCD' },
   };
 
   describe('GET /orders/:id', () => {
@@ -129,27 +188,74 @@ describe('OrdersController', () => {
   describe('GET /orders/:id/items', () => {
     const orderItems = [
       {
-        order_item_id: 1,
-        order_id: 1,
-        product_variant_id: 1,
-        quantity: 2,
-        unit_price: 4.99,
-        discount_applied: 0,
+        orderItem: {
+          order_item_id: 1,
+          supplier_order_id: 1,
+          product_variant_id: 1,
+          quantity: 2,
+          unit_price: 4.99,
+          discount_applied: 0,
+        },
+        supplierOrder: {
+          supplier_order_id: 1,
+          order_id: 1,
+          supplier_id: 1,
+          supplier_order_num: 'SO-001',
+          subtotal: 9.98,
+          shipping: 0,
+          total_price: 9.98,
+          status: OrderStatus.PENDING,
+        },
+        order: {
+          order_id: 1,
+          user_id: 1,
+          grand_total: 9.98,
+          region: 'NCR',
+          province: 'Manila',
+          city: 'Manila',
+          barangay: 'Barangay 709',
+          zip_code: '1000',
+          payment_id: 'ABCD',
+        },
       },
       {
-        order_item_id: 2,
-        order_id: 1,
-        product_variant_id: 1,
-        quantity: 2,
-        unit_price: 4.99,
-        discount_applied: 0,
+        orderItem: {
+          order_item_id: 2,
+          supplier_order_id: 1,
+          product_variant_id: 2,
+          quantity: 2,
+          unit_price: 4.99,
+          discount_applied: 0,
+        },
+        supplierOrder: {
+          supplier_order_id: 1,
+          order_id: 1,
+          supplier_id: 1,
+          supplier_order_num: 'SO-001',
+          subtotal: 9.98,
+          shipping: 0,
+          total_price: 9.98,
+          status: OrderStatus.PENDING,
+        },
+        order: {
+          order_id: 1,
+          user_id: 1,
+          grand_total: 9.98,
+          region: 'NCR',
+          province: 'Manila',
+          city: 'Manila',
+          barangay: 'Barangay 709',
+          zip_code: '1000',
+          payment_id: 'ABCD',
+        },
       },
     ];
 
     it('should return all items of a specified order id', async () => {
       mockService.getOrderItems.mockResolvedValueOnce(orderItems);
-      const res = await mockService.getOrderItems(1);
+      const res = await controller.getOrderItems(1);
       expect(res).toEqual(orderItems);
+      expect(mockService.getOrderItems).toHaveBeenCalledWith(1);
       expect(mockService.getOrderItems).toHaveBeenCalledTimes(1);
     });
 
@@ -178,8 +284,9 @@ describe('OrdersController', () => {
 
     it('should return all supplier orders of a specified order id', async () => {
       mockService.getSupplierOrders.mockResolvedValueOnce(supplierOrders);
-      const res = await mockService.getSupplierOrders(1);
+      const res = await controller.getSupplierOrders(1);
       expect(res).toEqual(supplierOrders);
+      expect(mockService.getSupplierOrders).toHaveBeenCalledWith(1);
       expect(mockService.getSupplierOrders).toHaveBeenCalledTimes(1);
     });
 
@@ -219,6 +326,31 @@ describe('OrdersController', () => {
   });
 
   describe('POST /orders', () => {
-    it.todo('should create a new order');
+    it('should create a new order', async () => {
+      const createDto = {
+        user_id: 1,
+        grand_total: 19.96,
+        region: 'NCR',
+        province: 'Manila',
+        city: 'Manila',
+        barangay: 'Barangay 709',
+        zip_code: '1000',
+        payment_id: 'PAYMENT-123',
+        order_date: '2025-01-01',
+      };
+
+      const expectedResult = {
+        order_id: 1,
+        grand_total: 19.96,
+        supplier_orders: [1],
+        items_count: 2,
+      };
+
+      mockService.createOrder.mockResolvedValueOnce(expectedResult);
+      const res = await controller.createOrder(createDto);
+      expect(res).toEqual(expectedResult);
+      expect(mockService.createOrder).toHaveBeenCalledWith(createDto);
+      expect(mockService.createOrder).toHaveBeenCalledTimes(1);
+    });
   });
 });

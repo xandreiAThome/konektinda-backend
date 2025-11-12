@@ -53,6 +53,8 @@ describe('AuthController', () => {
       new Error('Invalid Firebase token'),
     );
 
-    await expect(controller.googleAuth('bad-token')).rejects.toThrow('Invalid Firebase token');
+    await expect(controller.googleAuth('bad-token')).rejects.toThrow(
+      'Invalid Firebase token',
+    );
   });
 });

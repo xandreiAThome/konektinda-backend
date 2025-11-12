@@ -7,6 +7,12 @@ import { CreateProductsDto } from './dto/createproducts.dto';
 
 jest.mock('database', () => ({
   db: {
+    query: {
+      products: {
+        findMany: jest.fn(),
+        findFirst: jest.fn(),
+      },
+    },
     insert: jest.fn(),
     select: jest.fn(),
     update: jest.fn(),
@@ -47,90 +53,118 @@ describe('ProductsService (Drizzle ORM)', () => {
 
   describe('getAllProducts', () => {
     it('should return all products', async () => {
-      const allProducts = [{ product_id: 1, product_name: 'A' }, { product_id: 2, product_name: 'B' }];
+      const allProducts = [
+        {
+          product_id: 1,
+          product_name: 'Product A',
+          category: { category_id: 1, category_name: 'Category 1' },
+          variants: [{ product_variant_id: 1, variant_name: 'Variant 1' }],
+        },
+        {
+          product_id: 2,
+          product_name: 'Product B',
+          category: { category_id: 2, category_name: 'Category 2' },
+          variants: [{ product_variant_id: 2, variant_name: 'Variant 2' }],
+        },
+      ];
 
-      (db.select as jest.Mock).mockReturnValueOnce({
-        from: jest.fn().mockResolvedValueOnce(allProducts),
-      });
+      (db.query.products.findMany as jest.Mock).mockResolvedValueOnce(
+        allProducts,
+      );
 
       const result = await service.getAllProducts();
       expect(result).toEqual(allProducts);
-      expect(db.select).toHaveBeenCalled();
+      expect(db.query.products.findMany).toHaveBeenCalled();
     });
   });
 
   describe('getSingleProduct', () => {
     it('should return a product by id', async () => {
-      const product = { product_id: 1, product_name: 'Single' };
+      const product = {
+        product_id: 1,
+        product_name: 'Single Product',
+        category: { category_id: 1, category_name: 'Category 1' },
+        variants: [{ product_variant_id: 1, variant_name: 'Variant 1' }],
+      };
 
-      (db.select as jest.Mock).mockReturnValueOnce({
-        from: jest.fn().mockReturnValueOnce({
-          where: jest.fn().mockResolvedValueOnce([product]),
-        }),
-      });
+      (db.query.products.findFirst as jest.Mock).mockResolvedValueOnce(product);
 
       const result = await service.getSingleProduct(1);
       expect(result).toEqual(product);
+      expect(db.query.products.findFirst).toHaveBeenCalled();
     });
 
     it('should throw NotFoundException if product not found', async () => {
-      (db.select as jest.Mock).mockReturnValueOnce({
-        from: jest.fn().mockReturnValueOnce({
-          where: jest.fn().mockResolvedValueOnce([]),
-        }),
-      });
+      (db.query.products.findFirst as jest.Mock).mockResolvedValueOnce(
+        undefined,
+      );
 
-      await expect(service.getSingleProduct(999)).rejects.toThrow(NotFoundException);
+      await expect(service.getSingleProduct(999)).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(db.query.products.findFirst).toHaveBeenCalled();
     });
   });
 
   describe('updateProduct', () => {
     it('should update and return a product', async () => {
       const updatedProduct = { product_id: 1, product_name: 'Updated' };
-      (db.update as jest.Mock).mockReturnValueOnce({
-        set: jest.fn().mockReturnValueOnce({
-          where: jest.fn().mockReturnValueOnce({
-            returning: jest.fn().mockResolvedValueOnce([updatedProduct]),
-          }),
-        }),
-      });
 
-      const result = await service.updateProduct(1, { product_name: 'Updated' });
+      const mockChain = {
+        set: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        returning: jest.fn().mockResolvedValueOnce([updatedProduct]),
+      };
+      (db.update as jest.Mock).mockReturnValueOnce(mockChain);
+
+      const result = await service.updateProduct(1, {
+        product_name: 'Updated',
+      });
       expect(result).toEqual(updatedProduct);
+      expect(db.update).toHaveBeenCalled();
+      expect(mockChain.set).toHaveBeenCalled();
+      expect(mockChain.where).toHaveBeenCalled();
+      expect(mockChain.returning).toHaveBeenCalled();
     });
 
     it('should throw NotFoundException if product not found', async () => {
-      (db.update as jest.Mock).mockReturnValueOnce({
-        set: jest.fn().mockReturnValueOnce({
-          where: jest.fn().mockReturnValueOnce({
-            returning: jest.fn().mockResolvedValueOnce([]),
-          }),
-        }),
-      });
+      const mockChain = {
+        set: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        returning: jest.fn().mockResolvedValueOnce([]),
+      };
+      (db.update as jest.Mock).mockReturnValueOnce(mockChain);
 
-      await expect(service.updateProduct(999, { product_name: 'X' })).rejects.toThrow(NotFoundException);
+      await expect(
+        service.updateProduct(999, { product_name: 'X' }),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('deleteProduct', () => {
     it('should delete a product', async () => {
-      (db.delete as jest.Mock).mockReturnValueOnce({
-        where: jest.fn().mockReturnValueOnce({
-          returning: jest.fn().mockResolvedValueOnce([{}]),
-        }),
-      });
+      const mockChain = {
+        where: jest.fn().mockReturnThis(),
+        returning: jest.fn().mockResolvedValueOnce([{ product_id: 1 }]),
+      };
+      (db.delete as jest.Mock).mockReturnValueOnce(mockChain);
 
       await expect(service.deleteProduct(1)).resolves.toBeUndefined();
+      expect(db.delete).toHaveBeenCalled();
+      expect(mockChain.where).toHaveBeenCalled();
+      expect(mockChain.returning).toHaveBeenCalled();
     });
 
     it('should throw NotFoundException if product not found', async () => {
-      (db.delete as jest.Mock).mockReturnValueOnce({
-        where: jest.fn().mockReturnValueOnce({
-          returning: jest.fn().mockResolvedValueOnce([]),
-        }),
-      });
+      const mockChain = {
+        where: jest.fn().mockReturnThis(),
+        returning: jest.fn().mockResolvedValueOnce([]),
+      };
+      (db.delete as jest.Mock).mockReturnValueOnce(mockChain);
 
-      await expect(service.deleteProduct(999)).rejects.toThrow(NotFoundException);
+      await expect(service.deleteProduct(999)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });
