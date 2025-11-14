@@ -16,7 +16,7 @@ import { FirebaseAuthGuard } from '../auth/guard/firebase-auth-guard';
 import type { AuthenticatedRequest } from 'interface/auth_req';
 
 // TEMP HARCODED FIREBASE UID
-const uid = process.env.FIREBASE_UID!;
+const uid = 'test-firebase-uid';
 
 @Controller('cart')
 export class CartsController {
@@ -41,13 +41,6 @@ export class CartsController {
   deleteCart(@Req() req: AuthenticatedRequest) {
     // const uid = req.user.uid;
     return this.cartsService.deleteCart(uid);
-  }
-
-  // DEBUG ROUTE TO GET ALL CARTS. CAN ALSO FILTER BY USER ID ?userId=xxx
-  @Get('/all')
-  // @UseGuards() // Override auth guard
-  getAllCarts(@Query('userId') userId?: number) {
-    return this.cartsService.getAllCarts(userId);
   }
 
   /*
@@ -96,5 +89,79 @@ export class CartsController {
   ) {
     // const uid = req.user.uid;
     return this.cartsService.deleteCartItem(uid, productVariantId);
+  }
+
+  // ----------DEBUG ROUTES BELOW------------------
+
+  @Get('/all')
+  // @UseGuards() // Override auth guard
+  getAllCarts(@Query('userId') userId?: number) {
+    return this.cartsService.getAllCarts(userId);
+  }
+
+  // Routes below are same as routes above but you can specify firebase uid through params (i.e. cart/firebaseuid/...)
+  @Get(':firebaseUID')
+  getCartByFirebaseUidDebug(@Param('firebaseUID') firebaseUID: string) {
+    return this.cartsService.getCartByFirebaseUid(firebaseUID);
+  }
+
+  @Post(':firebaseUID')
+  createCartDebug(@Param('firebaseUID') firebaseUID: string) {
+    return this.cartsService.createCart(firebaseUID);
+  }
+
+  @Delete(':firebaseUID')
+  deleteCartDebug(@Param('firebaseUID') firebaseUID: string) {
+    return this.cartsService.deleteCart(firebaseUID);
+  }
+
+  @Get(':firebaseUID/items')
+  getCartItemsDebug(@Param('firebaseUID') firebaseUID: string) {
+    return this.cartsService.getCartItems(firebaseUID);
+  }
+
+  @Get(':firebaseUID/items/:productVariantId')
+  getCartItemByIdDebug(
+    @Param('firebaseUID') firebaseUID: string,
+    @Param('productVariantId', ParseIntPipe) productVariantId: number,
+  ) {
+    return this.cartsService.getCartItemByVariantId(
+      firebaseUID,
+      productVariantId,
+    );
+  }
+
+  @Post(':firebaseUID/items/:productVariantId')
+  createCartItemDebug(
+    @Param('firebaseUID') firebaseUID: string,
+    @Param('productVariantId', ParseIntPipe) productVariantId: number,
+    @Body('quantity', ParseIntPipe) quantity: number,
+  ) {
+    return this.cartsService.addCartItem(
+      firebaseUID,
+      productVariantId,
+      quantity,
+    );
+  }
+
+  @Patch(':firebaseUID/items/:productVariantId')
+  updateCartItemDebug(
+    @Param('firebaseUID') firebaseUID: string,
+    @Param('productVariantId', ParseIntPipe) productVariantId: number,
+    @Body('quantity', ParseIntPipe) quantity?: number,
+  ) {
+    return this.cartsService.updateCartItem(
+      firebaseUID,
+      productVariantId,
+      quantity,
+    );
+  }
+
+  @Delete(':firebaseUID/items/:productVariantId')
+  deleteCartItemDebug(
+    @Param('firebaseUID') firebaseUID: string,
+    @Param('productVariantId', ParseIntPipe) productVariantId: number,
+  ) {
+    return this.cartsService.deleteCartItem(firebaseUID, productVariantId);
   }
 }
