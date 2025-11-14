@@ -5,6 +5,17 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 jest.mock('database', () => ({
   db: {
+    query: {
+      carts: {
+        findMany: jest.fn(),
+        findOne: jest.fn(),
+      },
+      cart_items: {
+        findMany: jest.fn(),
+        findFirst: jest.fn(),
+      },
+    },
+
     select: jest.fn(),
     insert: jest.fn(),
     delete: jest.fn(),
@@ -198,20 +209,20 @@ describe('cart item endpoints', () => {
 
   describe('getCartItems', () => {
     it('returns all items for the user cart', async () => {
-      mockSelectReturn([mockItem]);
+      (db.query.cart_items.findMany as jest.Mock).mockResolvedValue([mockItem]);
 
       const res = await service.getCartItems(firebaseUid);
 
       expect(mockGetCartId).toHaveBeenCalledWith(firebaseUid);
       expect(res).toEqual([mockItem]);
-      expect(db.select).toHaveBeenCalled();
+      expect(db.query.cart_items.findMany).toHaveBeenCalled();
       expect(mockGetCartId).toHaveBeenCalledWith(firebaseUid);
     });
   });
 
   describe('getCartItemByVariantId', () => {
     it('returns one item', async () => {
-      mockSelectReturn([mockItem]);
+      (db.query.cart_items.findFirst as jest.Mock).mockResolvedValue(mockItem);
 
       const res = await service.getCartItemByVariantId(
         firebaseUid,
@@ -383,7 +394,7 @@ describe('cart item endpoints', () => {
 
       const res = await service.deleteCartItem(firebaseUid, productVariantId);
 
-      expect(res).toEqual(mockItem);
+      expect(res).toBeUndefined();
       expect(db.delete).toHaveBeenCalledTimes(1);
       expect(mockGetCartId).toHaveBeenCalledWith(firebaseUid);
     });
