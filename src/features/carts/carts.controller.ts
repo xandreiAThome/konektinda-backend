@@ -92,33 +92,38 @@ export class CartsController {
   // ----------DEBUG ROUTES BELOW------------------
 
   @Get('/all')
-  // @UseGuards() // Override auth guard
+  @UseGuards() // Override auth guard
   getAllCarts(@Query('userId') userId?: number) {
     return this.cartsService.getAllCarts(userId);
   }
 
   // Routes below are same as routes above but you can specify firebase uid through params (i.e. cart/firebaseuid/...)
   @Get(':firebaseUID')
+  @UseGuards()
   getCartByFirebaseUidDebug(@Param('firebaseUID') firebaseUID: string) {
     return this.cartsService.getCartByFirebaseUid(firebaseUID);
   }
 
   @Post(':firebaseUID')
+  @UseGuards()
   createCartDebug(@Param('firebaseUID') firebaseUID: string) {
     return this.cartsService.createCart(firebaseUID);
   }
 
   @Delete(':firebaseUID')
+  @UseGuards()
   deleteCartDebug(@Param('firebaseUID') firebaseUID: string) {
     return this.cartsService.deleteCart(firebaseUID);
   }
 
   @Get(':firebaseUID/items')
+  @UseGuards()
   getCartItemsDebug(@Param('firebaseUID') firebaseUID: string) {
     return this.cartsService.getCartItems(firebaseUID);
   }
 
   @Get(':firebaseUID/items/:productVariantId')
+  @UseGuards()
   getCartItemByIdDebug(
     @Param('firebaseUID') firebaseUID: string,
     @Param('productVariantId', ParseIntPipe) productVariantId: number,
@@ -130,6 +135,7 @@ export class CartsController {
   }
 
   @Post(':firebaseUID/items/:productVariantId')
+  @UseGuards()
   createCartItemDebug(
     @Param('firebaseUID') firebaseUID: string,
     @Param('productVariantId', ParseIntPipe) productVariantId: number,
@@ -143,6 +149,7 @@ export class CartsController {
   }
 
   @Patch(':firebaseUID/items/:productVariantId')
+  @UseGuards()
   updateCartItemDebug(
     @Param('firebaseUID') firebaseUID: string,
     @Param('productVariantId', ParseIntPipe) productVariantId: number,
@@ -156,6 +163,7 @@ export class CartsController {
   }
 
   @Delete(':firebaseUID/items/:productVariantId')
+  @UseGuards()
   deleteCartItemDebug(
     @Param('firebaseUID') firebaseUID: string,
     @Param('productVariantId', ParseIntPipe) productVariantId: number,
