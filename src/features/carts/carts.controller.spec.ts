@@ -3,6 +3,7 @@ import { CartsController } from './carts.controller';
 import { CartsService } from './carts.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { FirebaseAuthGuard } from '../auth/guard/firebase-auth-guard';
+import { AuthenticatedRequest } from 'interface/auth_req';
 
 const mockService = {
   // cart
@@ -28,7 +29,7 @@ describe('Cart endpoints (controller)', () => {
   let controller: CartsController;
 
   const uid = 'abc';
-  const req = { user: { uid } } as any;
+  const req = { user: { uid } } as AuthenticatedRequest;
   const mockCart = { cart_id: 2, user_id: 2 };
 
   beforeEach(async () => {
@@ -110,7 +111,7 @@ describe('Cart item endpoints (controller)', () => {
   let controller: CartsController;
 
   const uid = 'abc';
-  const req = { user: { uid } } as any;
+  const req = { user: { uid } } as AuthenticatedRequest;
   const productVariantId = 5;
   const mockItem = {
     cart_item_id: 11,

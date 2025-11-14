@@ -17,7 +17,7 @@ import { and, eq } from 'drizzle-orm';
 @Injectable()
 export class CartsService {
   // helper to resolve DB user id from Firebase UID
-  private async getUserIdByFirebaseUid(firebaseUid: string): Promise<number> {
+  async getUserIdByFirebaseUid(firebaseUid: string): Promise<number> {
     const [user] = await db
       .select()
       .from(users)

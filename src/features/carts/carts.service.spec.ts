@@ -49,7 +49,7 @@ describe('Cart endpoints', () => {
 
     // resolve user id
     mockGetUserId = jest
-      .spyOn(service as any, 'getUserIdByFirebaseUid')
+      .spyOn(service, 'getUserIdByFirebaseUid')
       .mockResolvedValue(2);
   });
 
@@ -83,7 +83,7 @@ describe('Cart endpoints', () => {
 
     it('propagates NotFound if user lookup fails', async () => {
       const localSpy = jest
-        .spyOn(service as any, 'getUserIdByFirebaseUid')
+        .spyOn(service, 'getUserIdByFirebaseUid')
         .mockRejectedValue(new NotFoundException('User not found'));
 
       await expect(service.getCartByFirebaseUid(firebaseUid)).rejects.toThrow(
@@ -150,16 +150,16 @@ describe('Cart endpoints', () => {
     it('returns user_id', async () => {
       mockSelectReturn([{ user_id: 2 }]);
 
-      const id = await (service as any).getUserIdByFirebaseUid(firebaseUid);
+      const id = await service.getUserIdByFirebaseUid(firebaseUid);
       expect(id).toBe(2);
     });
 
     it('throws if user missing', async () => {
       mockSelectReturn([]);
 
-      await expect(
-        (service as any).getUserIdByFirebaseUid('nope'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getUserIdByFirebaseUid('nope')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });
@@ -199,7 +199,7 @@ describe('cart item endpoints', () => {
     jest.resetAllMocks();
 
     mockGetCartId = jest
-      .spyOn(service as any, 'getCartByFirebaseUid')
+      .spyOn(service, 'getCartByFirebaseUid')
       .mockResolvedValue(mockCart);
   });
 
