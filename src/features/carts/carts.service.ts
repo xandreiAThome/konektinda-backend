@@ -4,13 +4,20 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { db } from 'database';
-import { carts, cart_items, product_variants, users } from 'db/schema';
+import {
+  carts,
+  cart_items,
+  product_variants,
+  users,
+  Cart,
+  CartItem,
+} from 'db/schema';
 import { and, eq } from 'drizzle-orm';
 
 @Injectable()
 export class CartsService {
   // helper to resolve DB user id from Firebase UID
-  private async getUserIdByFirebaseUid(firebaseUid: string): Promise<number> {
+  async getUserIdByFirebaseUid(firebaseUid: string): Promise<number> {
     const [user] = await db
       .select()
       .from(users)
@@ -24,7 +31,7 @@ export class CartsService {
   }
 
   // helper to get cart id from Firebase UID
-  async getCartByFirebaseUid(firebaseUid: string) {
+  async getCartByFirebaseUid(firebaseUid: string): Promise<Cart> {
     const userId = await this.getUserIdByFirebaseUid(firebaseUid);
 
     const [cart] = await db
@@ -39,7 +46,7 @@ export class CartsService {
     return cart;
   }
 
-  async createCart(firebaseUid: string) {
+  async createCart(firebaseUid: string): Promise<Cart> {
     const userId = await this.getUserIdByFirebaseUid(firebaseUid);
 
     const [cart] = await db
@@ -50,7 +57,7 @@ export class CartsService {
     return cart;
   }
 
-  async deleteCart(firebaseUid: string) {
+  async deleteCart(firebaseUid: string): Promise<void> {
     const userId = await this.getUserIdByFirebaseUid(firebaseUid);
 
     const [deletedCart] = await db
@@ -84,29 +91,36 @@ export class CartsService {
   Cart Item functions below
   */
 
-  async getCartItems(firebaseUid: string) {
+  async getCartItems(
+    firebaseUid: string,
+  ): Promise<Awaited<ReturnType<typeof db.query.cart_items.findMany>>> {
     const cart = await this.getCartByFirebaseUid(firebaseUid);
 
-    const items = await db
-      .select()
-      .from(cart_items)
-      .where(eq(cart_items.cart_id, cart.cart_id));
+    const items = await db.query.cart_items.findMany({
+      where: eq(cart_items.cart_id, cart.cart_id),
+      with: {
+        variant: true,
+      },
+    });
 
     return items;
   }
 
-  async getCartItemByVariantId(firebaseUid: string, productVariantId: number) {
+  async getCartItemByVariantId(
+    firebaseUid: string,
+    productVariantId: number,
+  ): Promise<Awaited<ReturnType<typeof db.query.cart_items.findFirst>>> {
     const cart = await this.getCartByFirebaseUid(firebaseUid);
 
-    const [item] = await db
-      .select()
-      .from(cart_items)
-      .where(
-        and(
-          eq(cart_items.cart_id, cart.cart_id),
-          eq(cart_items.product_variant_id, productVariantId),
-        ),
-      );
+    const item = await db.query.cart_items.findFirst({
+      where: and(
+        eq(cart_items.cart_id, cart.cart_id),
+        eq(cart_items.product_variant_id, productVariantId),
+      ),
+      with: {
+        variant: true,
+      },
+    });
 
     if (!item) {
       throw new NotFoundException(
@@ -121,7 +135,7 @@ export class CartsService {
     firebaseUid: string,
     productVariantId: number,
     quantity: number,
-  ) {
+  ): Promise<CartItem> {
     if (!Number.isInteger(quantity) || quantity <= 0) {
       throw new BadRequestException('Quantity must be a positive integer.');
     }
@@ -181,7 +195,7 @@ export class CartsService {
     firebaseUid: string,
     productVariantId: number,
     quantity?: number,
-  ) {
+  ): Promise<CartItem> {
     const cart = await this.getCartByFirebaseUid(firebaseUid);
 
     // get latest product variant details
@@ -245,7 +259,10 @@ export class CartsService {
     return updated;
   }
 
-  async deleteCartItem(firebaseUid: string, productVariantId: number) {
+  async deleteCartItem(
+    firebaseUid: string,
+    productVariantId: number,
+  ): Promise<void> {
     const cart = await this.getCartByFirebaseUid(firebaseUid);
 
     const [deleted] = await db
@@ -263,7 +280,5 @@ export class CartsService {
         `Cart item with variant ${productVariantId} not found.`,
       );
     }
-
-    return deleted;
   }
 }
