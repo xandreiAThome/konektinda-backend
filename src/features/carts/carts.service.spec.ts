@@ -24,12 +24,14 @@ jest.mock('database', () => ({
 }));
 
 // Mock the select chain once to reduce redundancy
-const mockSelectReturn = (data: any[]) => {
-  (db.select as jest.Mock).mockReturnValueOnce({
+const selectSpy = jest.spyOn(db, 'select');
+
+const mockSelectReturn = (data: unknown[]) => {
+  selectSpy.mockReturnValueOnce({
     from: jest.fn().mockReturnValueOnce({
       where: jest.fn().mockResolvedValueOnce(data),
     }),
-  });
+  } as unknown as ReturnType<typeof db.select>);
 };
 
 describe('Cart endpoints', () => {
