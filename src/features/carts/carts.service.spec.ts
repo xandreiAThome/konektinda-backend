@@ -73,14 +73,17 @@ describe('Cart endpoints', () => {
       expect(db.select).toHaveBeenCalledTimes(1);
     });
 
-    it('throws if cart not found', async () => {
+    it('creates new cart if cart not found', async () => {
       mockSelectReturn([]);
 
-      await expect(service.getCartByFirebaseUid(firebaseUid)).rejects.toThrow(
-        NotFoundException,
-      );
+      const mockCart = { cart_id: 1, user_id: 1 };
+      jest.spyOn(service, 'createCart').mockResolvedValue(mockCart);
+
+      const result = await service.getCartByFirebaseUid(firebaseUid);
 
       expect(mockGetUserId).toHaveBeenCalledWith(firebaseUid);
+      expect(service.createCart).toHaveBeenCalledWith(firebaseUid);
+      expect(result).toEqual(mockCart);
     });
 
     it('propagates NotFound if user lookup fails', async () => {

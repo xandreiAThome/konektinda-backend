@@ -1,13 +1,15 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { FirebaseService } from '../firebase/firebase.service';
 import { UsersService } from 'src/features/users/users.service';
-import { NewUser } from 'db/schema';
+import { CartsService } from '../carts/carts.service';
+import { NewCart, NewUser } from 'db/schema';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly firebaseService: FirebaseService,
+    private readonly cartsService: CartsService,
   ) {}
 
   async verifyFirebaseToken(idToken: string) {
@@ -24,6 +26,7 @@ export class AuthService {
     const { uid, email, name, picture, firebase } = decodedToken;
 
     const existingUser = await this.usersService.findByEmail(email);
+
     if (existingUser) return existingUser;
 
     const provider = firebase?.sign_in_provider || 'unknown';
@@ -43,7 +46,15 @@ export class AuthService {
       profile_picture_url: picture || '',
     };
 
-    return this.usersService.createUser(newUser);
+    const registeredUser = await this.usersService.createUser(newUser);
+
+    try {
+      await this.cartsService.createCart(uid);
+    } catch (e) {
+      console.error('Failed to create cart for user', uid, e);
+    }
+
+    return registeredUser;
   }
 
   async loginOrRegister(idToken: string) {

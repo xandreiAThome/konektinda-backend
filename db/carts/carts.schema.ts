@@ -7,7 +7,8 @@ export const carts = pgTable('carts', {
   cart_id: integer('cart_id').primaryKey().generatedAlwaysAsIdentity(),
   user_id: integer('user_id')
     .references(() => users.user_id)
-    .notNull(),
+    .notNull()
+    .unique(),
 });
 
 export const cartsRelations = relations(carts, ({ one, many }) => ({
