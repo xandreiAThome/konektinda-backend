@@ -2,12 +2,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductVariantDto } from './dto/create-product_variant.dto';
 import { UpdateProductVariantDto } from './dto/update-product_variant.dto';
 import { db } from 'database';
-import { product_variants } from 'db/schema';
+import { product_variants, ProductVariant } from 'db/schema';
 import { eq, and } from 'drizzle-orm';
 
 @Injectable()
 export class ProductVariantsService {
-  async createProductVariant(dto: CreateProductVariantDto) {
+  async createProductVariant(
+    dto: CreateProductVariantDto,
+  ): Promise<ProductVariant> {
     const [newVariant] = await db
       .insert(product_variants)
       .values({
