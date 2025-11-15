@@ -36,10 +36,10 @@ export class UsersService {
   }
 
   async findById(
-    id: number,
+    id: string,
   ): Promise<Awaited<ReturnType<typeof db.query.users.findFirst>>> {
     return db.query.users.findFirst({
-      where: eq(users.user_id, id),
+      where: eq(users.firebase_uid, id),
       with: {
         addresses: true,
         supplier: true,
@@ -47,17 +47,17 @@ export class UsersService {
     });
   }
 
-  async updateUser(id: number, dto: UpdateUserDto): Promise<User> {
+  async updateUser(id: string, dto: UpdateUserDto): Promise<User> {
     const [user] = await db
       .update(users)
       .set(dto)
-      .where(eq(users.user_id, id))
+      .where(eq(users.firebase_uid, id))
       .returning();
     return user;
   }
 
-  async deleteUser(id: number): Promise<string> {
-    await db.delete(users).where(eq(users.user_id, id));
-    return `User with id ${id} has been deleted.`;
+  async deleteUser(id: string): Promise<string> {
+    await db.delete(users).where(eq(users.firebase_uid, id));
+    return `User with firebase_uid ${id} has been deleted.`;
   }
 }

@@ -31,16 +31,16 @@ export class UsersController {
 
   @Get(':id')
   async getUserById(@Param('id') id: string) {
-    return this.usersService.findById(Number(id));
+    return this.usersService.findById(id);
   }
 
   @Patch(':id')
   async updateUserById(@Param('id') id: string, @Body() dto: UpdateUserDto) {
-    return this.usersService.updateUser(Number(id), dto);
+    return this.usersService.updateUser(id, dto);
   }
 
   @Delete(':id')
   async deleteUserById(@Param('id') id: string) {
-    return this.usersService.deleteUser(Number(id));
+    return this.usersService.deleteUser(id);
   }
 }
