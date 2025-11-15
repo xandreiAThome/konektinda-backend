@@ -39,8 +39,9 @@ export class CartsService {
       .from(carts)
       .where(eq(carts.user_id, userId));
 
+    // Create new cart if it doesn't exist
     if (!cart) {
-      throw new NotFoundException(`Cart for user id ${userId} not found.`);
+      return this.createCart(firebaseUid);
     }
 
     return cart;

@@ -7,5 +7,6 @@ import { FirebaseModule } from '../firebase/firebase.module';
   controllers: [CartsController],
   providers: [CartsService],
   imports: [FirebaseModule],
+  exports: [CartsService],
 })
 export class CartsModule {}

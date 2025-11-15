@@ -3,11 +3,13 @@ import { AuthService } from './auth.service';
 import { UsersService } from 'src/features/users/users.service';
 import { FirebaseService } from 'src/features/firebase/firebase.service';
 import { UnauthorizedException } from '@nestjs/common';
+import { CartsService } from '../carts/carts.service';
 
 describe('AuthService', () => {
   let service: AuthService;
   let usersService: UsersService;
   let firebaseService: FirebaseService;
+  let cartsService: CartsService;
 
   const mockFirebaseAuth = {
     verifyIdToken: jest.fn(),
@@ -30,12 +32,19 @@ describe('AuthService', () => {
             getAuth: jest.fn().mockReturnValue(mockFirebaseAuth),
           },
         },
+        {
+          provide: CartsService,
+          useValue: {
+            createCart: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
     usersService = module.get<UsersService>(UsersService);
     firebaseService = module.get<FirebaseService>(FirebaseService);
+    cartsService = module.get<CartsService>(CartsService);
   });
 
   afterEach(() => {
@@ -109,6 +118,8 @@ describe('AuthService', () => {
         role: 'CONSUMER',
         profile_picture_url: 'pic2.jpg',
       });
+
+      expect(cartsService.createCart).toHaveBeenCalledWith(decoded.uid);
       expect(result).toBe(createdUser);
     });
 
@@ -137,6 +148,7 @@ describe('AuthService', () => {
         role: 'CONSUMER',
         profile_picture_url: '',
       });
+      expect(cartsService.createCart).toHaveBeenCalledWith(decoded.uid);
       expect(result).toBe(createdUser);
     });
   });
