@@ -150,7 +150,7 @@ export class CartsService {
       .where(eq(product_variants.product_variant_id, productVariantId));
 
     if (!variant) {
-      throw new BadRequestException('Invalid product variant ID.');
+      throw new NotFoundException('Invalid product variant ID.');
     }
 
     // verify if right quantity is selected
@@ -159,7 +159,7 @@ export class CartsService {
     }
 
     if (!variant.is_active) {
-      throw new BadRequestException('Product variant is inactive.');
+      throw new NotFoundException('Product variant is inactive.');
     }
 
     // if already in cart, throw error
