@@ -1,19 +1,18 @@
-import {
-  IsInt,
-  IsString,
-  IsBoolean,
-  IsOptional,
-  MaxLength,
-} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-export class CreateProductsDto {
+export class ProductResponseDto {
+  @ApiProperty({
+    description: 'The unique identifier of the product',
+    example: 1,
+    type: Number,
+  })
+  product_id: number;
+
   @ApiProperty({
     description: 'The ID of the product category',
     example: 1,
     type: Number,
   })
-  @IsInt()
   product_category_id: number;
 
   @ApiProperty({
@@ -21,7 +20,6 @@ export class CreateProductsDto {
     example: 1,
     type: Number,
   })
-  @IsInt()
   supplier_id: number;
 
   @ApiProperty({
@@ -30,8 +28,6 @@ export class CreateProductsDto {
     maxLength: 100,
     type: String,
   })
-  @IsString()
-  @MaxLength(100)
   product_name: string;
 
   @ApiPropertyOptional({
@@ -41,18 +37,28 @@ export class CreateProductsDto {
     type: String,
     nullable: true,
   })
-  @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  product_description?: string | null | undefined;
+  product_description: string | null;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Whether the product is active and available for purchase',
     example: true,
-    default: true,
     type: Boolean,
   })
-  @IsOptional()
-  @IsBoolean()
-  is_active?: boolean;
+  is_active: boolean;
+
+  @ApiPropertyOptional({
+    description: 'The product category details',
+  })
+  category?: any;
+
+  @ApiPropertyOptional({
+    description: 'The product variants',
+    isArray: true,
+  })
+  variants?: any[];
+
+  @ApiPropertyOptional({
+    description: 'The supplier details',
+  })
+  supplier?: any;
 }
