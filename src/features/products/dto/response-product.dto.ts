@@ -1,64 +1,33 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ResponseCategoryDto } from '../../product_categories/dto/response-product_category.dto';
+import { ResponseSupplierDto } from '../../suppliers/dto/response-supplier.dto';
+import { ResponseProductVariantDto } from 'src/features/product_variants/dto/response-product_variant.dto';
 
-export class ProductResponseDto {
-  @ApiProperty({
-    description: 'The unique identifier of the product',
-    example: 1,
-    type: Number,
-  })
+export class ResponseProductDto {
+  @ApiProperty({ example: 1 })
   product_id: number;
 
-  @ApiProperty({
-    description: 'The ID of the product category',
-    example: 1,
-    type: Number,
-  })
+  @ApiProperty({ example: 1 })
   product_category_id: number;
 
-  @ApiProperty({
-    description: 'The ID of the supplier',
-    example: 1,
-    type: Number,
-  })
+  @ApiProperty({ example: 1 })
   supplier_id: number;
 
-  @ApiProperty({
-    description: 'The name of the product',
-    example: 'Organic Apples',
-    maxLength: 100,
-    type: String,
-  })
+  @ApiProperty({ example: 'Organic Apples' })
   product_name: string;
 
-  @ApiPropertyOptional({
-    description: 'A detailed description of the product',
-    example: 'Fresh organic apples from local farms',
-    maxLength: 255,
-    type: String,
-    nullable: true,
-  })
+  @ApiPropertyOptional({ example: 'Fresh organic apples from local farms' })
   product_description: string | null;
 
-  @ApiProperty({
-    description: 'Whether the product is active and available for purchase',
-    example: true,
-    type: Boolean,
-  })
+  @ApiProperty({ example: true })
   is_active: boolean;
 
-  @ApiPropertyOptional({
-    description: 'The product category details',
-  })
-  category?: any;
+  @ApiPropertyOptional({ type: () => ResponseCategoryDto })
+  category?: ResponseCategoryDto;
 
-  @ApiPropertyOptional({
-    description: 'The product variants',
-    isArray: true,
-  })
-  variants?: any[];
+  @ApiPropertyOptional({ type: () => [ResponseProductVariantDto] })
+  variants?: ResponseProductVariantDto[];
 
-  @ApiPropertyOptional({
-    description: 'The supplier details',
-  })
-  supplier?: any;
+  @ApiPropertyOptional({ type: () => ResponseSupplierDto })
+  supplier?: ResponseSupplierDto;
 }

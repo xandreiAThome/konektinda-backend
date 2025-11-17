@@ -22,7 +22,7 @@ import {
 import { ProductsService } from './products.service';
 import { CreateProductsDto } from './dto/createproducts.dto';
 import { UpdateProductsDto } from './dto/updateprodcuts.dto';
-import { ProductResponseDto } from './dto/product-response.dto';
+import { ResponseProductDto } from './dto/response-product.dto';
 import { Product } from 'db/schema';
 
 @ApiTags('products')
@@ -38,7 +38,7 @@ export class ProductsController {
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved all products',
-    type: [ProductResponseDto],
+    type: [ResponseProductDto],
   })
   @ApiResponse({
     status: 500,
@@ -62,7 +62,7 @@ export class ProductsController {
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved the product',
-    type: ProductResponseDto,
+    type: ResponseProductDto,
   })
   @ApiResponse({
     status: 404,
@@ -86,7 +86,7 @@ export class ProductsController {
   @ApiResponse({
     status: 201,
     description: 'Product successfully created',
-    type: ProductResponseDto,
+    type: ResponseProductDto,
   })
   @ApiResponse({
     status: 400,
@@ -115,7 +115,7 @@ export class ProductsController {
   @ApiResponse({
     status: 200,
     description: 'Product successfully updated',
-    type: ProductResponseDto,
+    type: ResponseProductDto,
   })
   @ApiResponse({
     status: 404,
