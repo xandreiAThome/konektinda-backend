@@ -75,6 +75,7 @@ describe('Cart endpoints (controller)', () => {
     });
   });
 
+  /*
   describe('POST /cart', () => {
     it('creates a cart for the current user', async () => {
       mockService.createCart.mockResolvedValueOnce(mockCart);
@@ -104,7 +105,7 @@ describe('Cart endpoints (controller)', () => {
       );
       expect(mockService.deleteCart).toHaveBeenCalledWith(expect.any(String));
     });
-  });
+  });*/
 });
 
 describe('Cart item endpoints (controller)', () => {

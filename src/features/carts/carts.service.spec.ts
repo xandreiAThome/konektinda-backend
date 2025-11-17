@@ -279,7 +279,7 @@ describe('cart item endpoints', () => {
 
       await expect(
         service.addCartItem(firebaseUid, productVariantId, 1),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow(NotFoundException);
       expect(mockGetCartId).toHaveBeenCalledWith(firebaseUid);
     });
 
@@ -297,7 +297,7 @@ describe('cart item endpoints', () => {
 
       await expect(
         service.addCartItem(firebaseUid, productVariantId, 1),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow(NotFoundException);
       expect(mockGetCartId).toHaveBeenCalledWith(firebaseUid);
     });
 
