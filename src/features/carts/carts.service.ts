@@ -100,7 +100,15 @@ export class CartsService {
     const items = await db.query.cart_items.findMany({
       where: eq(cart_items.cart_id, cart.cart_id),
       with: {
-        variant: true,
+        variant: {
+          with: {
+            product: {
+              columns: {
+                product_name: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -119,7 +127,15 @@ export class CartsService {
         eq(cart_items.product_variant_id, productVariantId),
       ),
       with: {
-        variant: true,
+        variant: {
+          with: {
+            product: {
+              columns: {
+                product_name: true,
+              },
+            },
+          },
+        },
       },
     });
 

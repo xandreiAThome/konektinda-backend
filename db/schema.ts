@@ -4,6 +4,7 @@ export * from './couriers/couriers.schema';
 export * from './orders/order_items.schema';
 export * from './orders/orders.schema';
 export * from './payments/payments.schema';
+export * from './products/product_images.schema';
 export * from './products/product_categories.schema';
 export * from './products/product_variants.schema';
 export * from './products/products.schema';
