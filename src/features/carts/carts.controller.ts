@@ -58,10 +58,11 @@ export class CartsController {
   */
 
   @ApiOperation({
-    summary: 'Get all cart items for the authenticated user',
+    summary: 'Get all cart items for the authenticated user with product names',
   })
   @ApiOkResponse({
-    description: 'Successfully fetched all cart items',
+    description:
+      'Successfully fetched all cart items with parent product names',
     type: ResponseCartItemDto,
     isArray: true,
   })
