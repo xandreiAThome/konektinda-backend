@@ -41,7 +41,7 @@ export class UserAddressController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create a new address',
-    description: 'Creates a new address for a user',
+    description: 'Creates a new address for the authenticated user',
   })
   @ApiBody({ type: CreateUserAddressDto })
   @ApiResponse({
@@ -56,8 +56,20 @@ export class UserAddressController {
     status: 401,
     description: 'Unauthorized - Invalid or missing Firebase token',
   })
-  async createAddress(@Body() dto: CreateUserAddressDto) {
-    return this.userAddressService.create(dto);
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
+  })
+  async createAddress(
+    @Body() dto: CreateUserAddressDto,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const uid = req.user.uid;
+    const user = await this.usersService.findById(uid);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return this.userAddressService.create(dto, user.user_id);
   }
 
   @Get()

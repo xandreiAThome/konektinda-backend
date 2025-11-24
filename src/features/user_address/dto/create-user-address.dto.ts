@@ -1,16 +1,7 @@
-import { IsString, IsInt, MaxLength, IsNotEmpty } from 'class-validator';
+import { IsString, MaxLength, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateUserAddressDto {
-  @ApiProperty({
-    description: 'The ID of the user',
-    example: 1,
-    type: Number,
-  })
-  @IsInt()
-  @IsNotEmpty()
-  user_id: number;
-
   @ApiProperty({
     description: 'Region of the address',
     example: 'NCR',

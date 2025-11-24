@@ -8,8 +8,17 @@ import { UpdateUserAddressDto } from './dto/update-user-address.dto';
 
 @Injectable()
 export class UserAddressService {
-  async create(dto: CreateUserAddressDto): Promise<UserAddress> {
-    const [address] = await db.insert(user_addresses).values(dto).returning();
+  async create(
+    dto: CreateUserAddressDto,
+    userId: number,
+  ): Promise<UserAddress> {
+    const [address] = await db
+      .insert(user_addresses)
+      .values({
+        ...dto,
+        user_id: userId,
+      })
+      .returning();
     return address;
   }
 
