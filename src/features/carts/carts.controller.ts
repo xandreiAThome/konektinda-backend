@@ -104,7 +104,7 @@ export class CartsController {
   }
 
   @ApiOperation({
-    summary: 'Add a product variant to the user’s cart',
+    summary: "Add a product variant to the user's cart",
   })
   @ApiCreatedResponse({
     description: 'Cart item added successfully',

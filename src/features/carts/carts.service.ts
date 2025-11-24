@@ -103,6 +103,8 @@ export class CartsService {
         variant: {
           columns: {
             variant_name: true,
+            product_variant_img: true,
+            is_active: true,
           },
           with: {
             product: {
@@ -133,6 +135,8 @@ export class CartsService {
         variant: {
           columns: {
             variant_name: true,
+            product_variant_img: true,
+            is_active: true,
           },
           with: {
             product: {
