@@ -37,6 +37,10 @@ export const product_variantsRelations = relations(
       fields: [product_variants.product_id],
       references: [products.product_id],
     }),
+    images: one(product_images, {
+      fields: [product_variants.product_variant_img],
+      references: [product_images.product_image_id],
+    }),
   }),
 );
 

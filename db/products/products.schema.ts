@@ -31,6 +31,7 @@ export const productsRelations = relations(products, ({ one, many }) => ({
     references: [suppliers.supplier_id],
   }),
   variants: many(product_variants),
+  images: many(product_images),
 }));
 
 export type Product = InferSelectModel<typeof products>;

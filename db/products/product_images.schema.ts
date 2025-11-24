@@ -1,8 +1,11 @@
 import { pgTable, serial, text } from 'drizzle-orm/pg-core';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
+import { integer } from 'drizzle-orm/pg-core';
 
 export const product_images = pgTable('product_images', {
-  product_image_id: serial('product_image_id').primaryKey(),
+  product_image_id: integer('product_image_id')
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
   image_url: text('image_url').notNull(),
 });
 
