@@ -16,9 +16,6 @@ export const products = pgTable('products', {
   product_name: varchar('product_name', { length: 100 }).notNull(),
   product_description: varchar('product_description', { length: 255 }),
   is_active: boolean('is_active').notNull().default(true),
-  product_img: integer('product_img').references(
-    () => product_images.product_image_id,
-  ),
 });
 
 export const productsRelations = relations(products, ({ one, many }) => ({

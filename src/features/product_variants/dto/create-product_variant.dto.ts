@@ -52,4 +52,11 @@ export class CreateProductVariantDto {
   })
   @IsBoolean()
   is_active: boolean;
+
+  @ApiProperty({
+    description: 'Image URL of the product variant',
+    example: 'images.com/api/23231',
+  })
+  @IsString()
+  product_variant_img: string;
 }

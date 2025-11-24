@@ -50,6 +50,27 @@
       "when": 1763458266868,
       "tag": "0006_lazy_multiple_man",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1763945075734,
+      "tag": "0007_salty_gargoyle",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1763945466751,
+      "tag": "0008_funny_adam_warlock",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1763946370231,
+      "tag": "0009_outgoing_wrecker",
+      "breakpoints": true
     }
   ]
 }

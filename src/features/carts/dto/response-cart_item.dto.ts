@@ -42,10 +42,4 @@ export class ResponseCartItemDto {
     description: 'Timestamp when the price was recorded',
   })
   date_priced: string;
-
-  @ApiProperty({
-    example: 'Wireless Headphones',
-    description: 'Name of the parent product',
-  })
-  product_name: string;
 }
