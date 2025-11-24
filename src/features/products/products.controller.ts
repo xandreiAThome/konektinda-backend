@@ -21,7 +21,7 @@ import {
 } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
 import { CreateProductsDto } from './dto/createproducts.dto';
-import { UpdateProductsDto } from './dto/updateprodcuts.dto';
+import { UpdateProductsDto } from './dto/updateproducts.dto';
 import { ResponseProductDto } from './dto/response-product.dto';
 import { Product } from 'db/schema';
 
@@ -33,7 +33,8 @@ export class ProductsController {
   @Get()
   @ApiOperation({
     summary: 'Get all products',
-    description: 'Retrieves all products with their categories and variants',
+    description:
+      'Retrieves all products with their categories, variants, and images',
   })
   @ApiResponse({
     status: 200,
@@ -51,7 +52,8 @@ export class ProductsController {
   @Get(':id')
   @ApiOperation({
     summary: 'Get a single product',
-    description: 'Retrieves a product by ID with its category and variants',
+    description:
+      'Retrieves a product by ID with its category, variants, and images',
   })
   @ApiParam({
     name: 'id',

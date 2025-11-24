@@ -4,6 +4,7 @@ import {
   IsBoolean,
   IsOptional,
   MaxLength,
+  IsArray,
 } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -56,4 +57,14 @@ export class UpdateProductsDto {
   @IsOptional()
   @IsBoolean()
   is_active?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'List of product image URLs',
+    type: [String],
+    example: ['https://example.com/img1.jpg', 'https://example.com/img2.jpg'],
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  images?: string[];
 }

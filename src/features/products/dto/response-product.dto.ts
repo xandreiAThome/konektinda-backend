@@ -2,6 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ResponseCategoryDto } from '../../product_categories/dto/response-product_category.dto';
 import { ResponseSupplierDto } from '../../suppliers/dto/response-supplier.dto';
 import { ResponseProductVariantDto } from 'src/features/product_variants/dto/response-product_variant.dto';
+import { ResponseProductImageDto } from './respose-product_image.dto';
 
 export class ResponseProductDto {
   @ApiProperty({ example: 1 })
@@ -30,4 +31,7 @@ export class ResponseProductDto {
 
   @ApiPropertyOptional({ type: () => ResponseSupplierDto })
   supplier?: ResponseSupplierDto;
+
+  @ApiPropertyOptional({ type: () => [ResponseProductImageDto] })
+  images?: ResponseProductImageDto[];
 }

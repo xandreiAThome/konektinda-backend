@@ -13,7 +13,7 @@ export const product_variants = pgTable('product_variants', {
     .primaryKey()
     .generatedAlwaysAsIdentity(),
   product_id: integer('product_id')
-    .references(() => products.product_id)
+    .references(() => products.product_id, { onDelete: 'cascade' })
     .notNull(),
   variant_name: varchar('variant_name', { length: 100 }).notNull(),
   stock: integer('stock').notNull().default(0),
