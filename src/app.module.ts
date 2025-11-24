@@ -12,6 +12,7 @@ import { UsersModule } from './features/users/users.module';
 import { AuthModule } from './features/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { CartsModule } from './features/carts/carts.module';
+import { UserAddressModule } from './features/user_address/user_address.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { CartsModule } from './features/carts/carts.module';
     UsersModule,
     CartsModule,
     ConfigModule.forRoot({ isGlobal: true }),
+    UserAddressModule,
   ],
 
   controllers: [AppController],
