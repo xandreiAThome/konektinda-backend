@@ -23,19 +23,6 @@ export class UserAddressService {
     });
   }
 
-  async findMyAddresses(): Promise<
-    Awaited<ReturnType<typeof db.query.user_addresses.findMany>>
-  > {
-    // Placeholder user ID; replace with actual authenticated user ID retrieval logic
-    const authenticatedUserId = 1;
-    return db.query.user_addresses.findMany({
-      where: eq(user_addresses.user_id, authenticatedUserId),
-      with: {
-        user: true,
-      },
-    });
-  }
-
   async findById(
     id: number,
   ): Promise<Awaited<ReturnType<typeof db.query.user_addresses.findFirst>>> {
@@ -61,6 +48,14 @@ export class UserAddressService {
       with: {
         user: true,
       },
+    });
+  }
+
+  async findMyAddresses(
+    userId: number,
+  ): Promise<Awaited<ReturnType<typeof db.query.user_addresses.findMany>>> {
+    return db.query.user_addresses.findMany({
+      where: eq(user_addresses.user_id, userId),
     });
   }
 

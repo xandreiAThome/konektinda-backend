@@ -8,16 +8,22 @@ import {
   Post,
   UseGuards,
   ParseIntPipe,
+  Req,
 } from '@nestjs/common';
 import { UserAddressService } from './user_address.service';
 import { FirebaseAuthGuard } from '../auth/guard/firebase-auth-guard';
 import { CreateUserAddressDto } from './dto/create-user-address.dto';
 import { UpdateUserAddressDto } from './dto/update-user-address.dto';
+import type { AuthenticatedRequest } from 'interface/auth_req';
+import { UsersService } from '../users/users.service';
 
 @Controller('user-address')
 @UseGuards(FirebaseAuthGuard)
 export class UserAddressController {
-  constructor(private readonly userAddressService: UserAddressService) {}
+  constructor(
+    private readonly userAddressService: UserAddressService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @Post()
   async createAddress(@Body() dto: CreateUserAddressDto) {
@@ -29,9 +35,14 @@ export class UserAddressController {
     return this.userAddressService.findAll();
   }
 
-  @Get()
-  async getMyAddresses() {
-    return this.userAddressService.findMyAddresses();
+  @Get('me')
+  async getMyAddresses(@Req() req: AuthenticatedRequest) {
+    const uid = req.user.uid;
+    const user = await this.usersService.findById(uid);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return this.userAddressService.findMyAddresses(user.user_id);
   }
 
   @Get(':id')
