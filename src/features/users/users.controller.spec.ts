@@ -52,7 +52,7 @@ describe('UsersController', () => {
   it('should return a user by ID', async () => {
     const result = await controller.getUserById('1');
 
-    expect(usersService.findById).toHaveBeenCalledWith(1);
+    expect(usersService.findById).toHaveBeenCalledWith('1');
     expect(result).toEqual(mockUser);
   });
 });
