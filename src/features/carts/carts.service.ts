@@ -101,6 +101,11 @@ export class CartsService {
       where: eq(cart_items.cart_id, cart.cart_id),
       with: {
         variant: {
+          columns: {
+            variant_name: true,
+            product_variant_img: true,
+            is_active: true,
+          },
           with: {
             product: {
               columns: {
@@ -128,6 +133,11 @@ export class CartsService {
       ),
       with: {
         variant: {
+          columns: {
+            variant_name: true,
+            product_variant_img: true,
+            is_active: true,
+          },
           with: {
             product: {
               columns: {

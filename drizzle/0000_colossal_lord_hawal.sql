@@ -14,7 +14,8 @@ CREATE TABLE "cart_items" (
 --> statement-breakpoint
 CREATE TABLE "carts" (
 	"cart_id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "carts_cart_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
-	"user_id" integer NOT NULL
+	"user_id" integer NOT NULL,
+	CONSTRAINT "carts_user_id_unique" UNIQUE("user_id")
 );
 --> statement-breakpoint
 CREATE TABLE "couriers" (
@@ -42,6 +43,7 @@ CREATE TABLE "orders" (
 	"barangay" varchar(50) NOT NULL,
 	"zip_code" varchar(10) NOT NULL,
 	"payment_id" varchar(100) NOT NULL,
+	"status" "OrderStatus" DEFAULT 'PENDING' NOT NULL,
 	"order_date" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "orders_payment_id_unique" UNIQUE("payment_id")
 );
@@ -53,6 +55,12 @@ CREATE TABLE "payments" (
 	"status" "PaymentStatus" DEFAULT 'PENDING' NOT NULL,
 	"amount" numeric(10, 2) NOT NULL,
 	"payment_date" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "product_images" (
+	"product_image_id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "product_images_product_image_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
+	"image_url" varchar(250) NOT NULL,
+	"product_id" integer
 );
 --> statement-breakpoint
 CREATE TABLE "product_categories" (
@@ -67,7 +75,8 @@ CREATE TABLE "product_variants" (
 	"stock" integer DEFAULT 0 NOT NULL,
 	"price" numeric(10, 2) NOT NULL,
 	"discount" integer DEFAULT 0 NOT NULL,
-	"is_active" boolean DEFAULT true NOT NULL
+	"is_active" boolean DEFAULT true NOT NULL,
+	"product_variant_img" varchar(255) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "products" (
@@ -104,7 +113,7 @@ CREATE TABLE "supplier_orders" (
 CREATE TABLE "suppliers" (
 	"supplier_id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "suppliers_supplier_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
 	"supplier_name" varchar(50) NOT NULL,
-	"supplier_description" varchar(255)
+	"supplier_description" varchar(1000)
 );
 --> statement-breakpoint
 CREATE TABLE "user_addresses" (
@@ -119,29 +128,31 @@ CREATE TABLE "user_addresses" (
 --> statement-breakpoint
 CREATE TABLE "users" (
 	"user_id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "users_user_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
+	"firebase_uid" varchar(128),
 	"first_name" varchar(20) NOT NULL,
 	"last_name" varchar(20) NOT NULL,
 	"email" varchar(50) NOT NULL,
 	"username" varchar(20) NOT NULL,
-	"password_hash" varchar(255) NOT NULL,
-	"phone_number" varchar(20) NOT NULL,
+	"password_hash" varchar(255),
+	"phone_number" varchar(20),
 	"email_verified" boolean DEFAULT false NOT NULL,
 	"role" "UserRole" DEFAULT 'CONSUMER' NOT NULL,
 	"profile_picture_url" varchar(255) DEFAULT '',
 	"supplier_id" integer,
+	CONSTRAINT "users_firebase_uid_unique" UNIQUE("firebase_uid"),
 	CONSTRAINT "users_email_unique" UNIQUE("email"),
-	CONSTRAINT "users_username_unique" UNIQUE("username"),
-	CONSTRAINT "users_phone_number_unique" UNIQUE("phone_number")
+	CONSTRAINT "users_username_unique" UNIQUE("username")
 );
 --> statement-breakpoint
-ALTER TABLE "cart_items" ADD CONSTRAINT "cart_items_cart_id_carts_cart_id_fk" FOREIGN KEY ("cart_id") REFERENCES "public"."carts"("cart_id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "cart_items" ADD CONSTRAINT "cart_items_cart_id_carts_cart_id_fk" FOREIGN KEY ("cart_id") REFERENCES "public"."carts"("cart_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "cart_items" ADD CONSTRAINT "cart_items_product_variant_id_product_variants_product_variant_id_fk" FOREIGN KEY ("product_variant_id") REFERENCES "public"."product_variants"("product_variant_id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "carts" ADD CONSTRAINT "carts_user_id_users_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("user_id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "order_items" ADD CONSTRAINT "order_items_supplier_order_id_supplier_orders_supplier_order_id_fk" FOREIGN KEY ("supplier_order_id") REFERENCES "public"."supplier_orders"("supplier_order_id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "order_items" ADD CONSTRAINT "order_items_product_variant_id_product_variants_product_variant_id_fk" FOREIGN KEY ("product_variant_id") REFERENCES "public"."product_variants"("product_variant_id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "orders" ADD CONSTRAINT "orders_user_id_users_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("user_id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "orders" ADD CONSTRAINT "orders_payment_id_payments_ref_num_fk" FOREIGN KEY ("payment_id") REFERENCES "public"."payments"("ref_num") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "product_variants" ADD CONSTRAINT "product_variants_product_id_products_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."products"("product_id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "product_images" ADD CONSTRAINT "product_images_product_id_products_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."products"("product_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "product_variants" ADD CONSTRAINT "product_variants_product_id_products_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."products"("product_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "products" ADD CONSTRAINT "products_product_category_id_product_categories_product_category_id_fk" FOREIGN KEY ("product_category_id") REFERENCES "public"."product_categories"("product_category_id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "products" ADD CONSTRAINT "products_supplier_id_suppliers_supplier_id_fk" FOREIGN KEY ("supplier_id") REFERENCES "public"."suppliers"("supplier_id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "shipments" ADD CONSTRAINT "shipments_courier_id_couriers_courier_id_fk" FOREIGN KEY ("courier_id") REFERENCES "public"."couriers"("courier_id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint

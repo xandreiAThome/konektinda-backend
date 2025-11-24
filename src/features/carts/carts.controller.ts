@@ -30,6 +30,7 @@ import {
 } from '@nestjs/swagger';
 import { ResponseCartDto } from './dto/response-cart.dto';
 import { ResponseCartItemDto } from './dto/response-cart_item.dto';
+import { ResponseCreateCartItemDto } from './dto/response-create-cart_item.dto';
 
 @ApiBearerAuth()
 @UseGuards(FirebaseAuthGuard)
@@ -104,11 +105,11 @@ export class CartsController {
   }
 
   @ApiOperation({
-    summary: 'Add a product variant to the user’s cart',
+    summary: "Add a product variant to the user's cart",
   })
   @ApiCreatedResponse({
     description: 'Cart item added successfully',
-    type: ResponseCartItemDto,
+    type: ResponseCreateCartItemDto,
   })
   @ApiNotFoundResponse({
     description: 'Product variant is not found or inactive',
@@ -150,7 +151,7 @@ export class CartsController {
   })
   @ApiOkResponse({
     description: 'Cart item updated successfully',
-    type: ResponseCartItemDto,
+    type: ResponseCreateCartItemDto,
   })
   @ApiNotFoundResponse({
     description:

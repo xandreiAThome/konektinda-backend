@@ -1,5 +1,39 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+class ResponseCartItemProductDto {
+  @ApiProperty({
+    example: 'Mountain Spring Water',
+    description: 'Name of the parent product',
+  })
+  product_name: string;
+}
+
+class ResponseCartItemVariantDto {
+  @ApiProperty({
+    example: '14 Liters',
+    description: 'Name of the product variant',
+  })
+  variant_name: string;
+
+  @ApiProperty({
+    example: 'https://example.com/images/242.png',
+    description: 'Image URL of the variant',
+  })
+  product_variant_img: string;
+
+  @ApiProperty({
+    example: true,
+    description: 'Whether the variant is currently active',
+  })
+  is_active: boolean;
+
+  @ApiProperty({
+    type: () => ResponseCartItemProductDto,
+    description: 'Parent product information',
+  })
+  product: ResponseCartItemProductDto;
+}
+
 export class ResponseCartItemDto {
   @ApiProperty({
     example: 101,
@@ -44,8 +78,9 @@ export class ResponseCartItemDto {
   date_priced: string;
 
   @ApiProperty({
-    example: 'Wireless Headphones',
-    description: 'Name of the parent product',
+    type: () => ResponseCartItemVariantDto,
+    description:
+      'Details of the product variant associated with this cart item',
   })
-  product_name: string;
+  variant: ResponseCartItemVariantDto;
 }

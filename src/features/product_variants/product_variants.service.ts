@@ -80,7 +80,7 @@ export class ProductVariantsService {
       .returning();
 
     if (!variant) {
-      throw new NotFoundException('Product category not found.');
+      throw new NotFoundException('Product variant not found.');
     }
 
     return variant;
