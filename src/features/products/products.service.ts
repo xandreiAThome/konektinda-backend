@@ -44,6 +44,7 @@ export class ProductsService {
       with: {
         category: true,
         variants: true,
+        supplier: true,
         images: true,
       },
     });
@@ -58,6 +59,7 @@ export class ProductsService {
       with: {
         category: true,
         variants: true,
+        supplier: true,
         images: true,
       },
     });
@@ -108,11 +110,6 @@ export class ProductsService {
     if (!updatedProduct) {
       const prod = await db.query.products.findFirst({
         where: eq(products.product_id, id),
-        with: {
-          category: true,
-          variants: true,
-          images: true,
-        },
       });
       if (!prod) throw new NotFoundException(`Product with id ${id} not found`);
       updatedProduct = prod;

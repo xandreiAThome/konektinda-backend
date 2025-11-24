@@ -53,4 +53,11 @@ export class UpdateProductVariantDto {
   @IsOptional()
   @IsBoolean()
   is_active?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Image URL of the product variant',
+    example: 'images.com/api/23231',
+  })
+  @IsString()
+  product_variant_img: string;
 }

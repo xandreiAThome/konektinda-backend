@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsInt,
@@ -53,7 +53,7 @@ export class CreateProductVariantDto {
   @IsBoolean()
   is_active: boolean;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Image URL of the product variant',
     example: 'images.com/api/23231',
   })

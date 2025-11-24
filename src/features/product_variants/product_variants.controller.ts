@@ -25,7 +25,7 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 import { ResponseProductVariantDto } from './dto/response-product_variant.dto';
-
+import { ResponseBasicProductVariantDto } from './dto/response-basic-product_variant.dto';
 @Controller('product-variants')
 export class ProductVariantsController {
   constructor(
@@ -35,7 +35,7 @@ export class ProductVariantsController {
   @ApiOperation({ summary: 'Creates and returns a new product variant' })
   @ApiOkResponse({
     description: 'Product variant is created',
-    type: ResponseProductVariantDto,
+    type: ResponseBasicProductVariantDto,
   })
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -100,7 +100,7 @@ export class ProductVariantsController {
   })
   @ApiOkResponse({
     description: 'Successfully updated the product variant',
-    type: ResponseProductVariantDto,
+    type: ResponseBasicProductVariantDto,
   })
   @ApiNotFoundResponse({
     description: 'Product variant not found',

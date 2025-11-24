@@ -1,0 +1,1 @@
+ALTER TABLE "product_variants" ALTER COLUMN "product_variant_img" DROP NOT NULL;

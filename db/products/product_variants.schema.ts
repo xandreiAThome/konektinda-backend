@@ -26,7 +26,7 @@ export const product_variants = pgTable('product_variants', {
   is_active: boolean('is_active').notNull().default(true),
   product_variant_img: varchar('product_variant_img', {
     length: 255,
-  }).notNull(),
+  }),
 });
 
 export const product_variantsRelations = relations(

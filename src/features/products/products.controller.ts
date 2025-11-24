@@ -24,6 +24,7 @@ import { CreateProductsDto } from './dto/createproducts.dto';
 import { UpdateProductsDto } from './dto/updateproducts.dto';
 import { ResponseProductDto } from './dto/response-product.dto';
 import { Product } from 'db/schema';
+import { ResponseCreateProductDto } from './dto/response-create-product.dto';
 
 @ApiTags('products')
 @Controller('products')
@@ -34,7 +35,7 @@ export class ProductsController {
   @ApiOperation({
     summary: 'Get all products',
     description:
-      'Retrieves all products with their categories, variants, and images',
+      'Retrieves all products with their categories, variants, supplier and images',
   })
   @ApiResponse({
     status: 200,
@@ -53,7 +54,7 @@ export class ProductsController {
   @ApiOperation({
     summary: 'Get a single product',
     description:
-      'Retrieves a product by ID with its category, variants, and images',
+      'Retrieves a product by ID with its category, variants, supplier, and images',
   })
   @ApiParam({
     name: 'id',
@@ -88,7 +89,7 @@ export class ProductsController {
   @ApiResponse({
     status: 201,
     description: 'Product successfully created',
-    type: ResponseProductDto,
+    type: ResponseCreateProductDto,
   })
   @ApiResponse({
     status: 400,
@@ -117,7 +118,7 @@ export class ProductsController {
   @ApiResponse({
     status: 200,
     description: 'Product successfully updated',
-    type: ResponseProductDto,
+    type: ResponseCreateProductDto,
   })
   @ApiResponse({
     status: 404,
