@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { ResponseSupplierDto } from 'src/features/suppliers/dto/response-supplier.dto';
 
 class ResponseCartItemProductDto {
   @ApiProperty({
@@ -6,6 +7,12 @@ class ResponseCartItemProductDto {
     description: 'Name of the parent product',
   })
   product_name: string;
+
+  @ApiProperty({
+    type: () => ResponseSupplierDto,
+    description: 'Supplier of the product',
+  })
+  supplier: ResponseSupplierDto;
 }
 
 class ResponseCartItemVariantDto {
