@@ -9,6 +9,7 @@ import { users } from '../users/users.schema';
 import { payments } from '../payments/payments.schema';
 import { orderStatuses } from 'db/enums';
 import { InferSelectModel, InferInsertModel, relations } from 'drizzle-orm';
+import { order_addresses } from './order_addresses.schema';
 
 export const orders = pgTable('orders', {
   order_id: integer('order_id').primaryKey().generatedAlwaysAsIdentity(),
@@ -20,11 +21,6 @@ export const orders = pgTable('orders', {
     scale: 2,
     mode: 'number',
   }).notNull(), // Calculated from all supplier orders
-  region: varchar('region', { length: 50 }).notNull(),
-  province: varchar('province', { length: 50 }).notNull(),
-  city: varchar('city', { length: 50 }).notNull(),
-  barangay: varchar('barangay', { length: 50 }).notNull(),
-  zip_code: varchar('zip_code', { length: 10 }).notNull(),
   payment_id: varchar('payment_id', { length: 100 })
     .references(() => payments.ref_num)
     .notNull()
@@ -42,6 +38,7 @@ export const ordersRelations = relations(orders, ({ one }) => ({
     fields: [orders.payment_id],
     references: [payments.ref_num],
   }),
+  address: one(order_addresses),
 }));
 
 export type Order = InferSelectModel<typeof orders>;

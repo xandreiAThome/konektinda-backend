@@ -1,13 +1,18 @@
 import { integer, varchar, text, pgTable } from 'drizzle-orm/pg-core';
-import { users } from './users.schema';
+import { orders } from './orders.schema';
 import { InferInsertModel, InferSelectModel, relations } from 'drizzle-orm';
 
-export const user_addresses = pgTable('user_addresses', {
-  address_id: integer('address_id').primaryKey().generatedAlwaysAsIdentity(),
+export const order_addresses = pgTable('order_addresses', {
+  order_address_id: integer('order_address_id')
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
 
-  user_id: integer('user_id')
-    .references(() => users.user_id)
+  order_id: integer('order_id')
+    .references(() => orders.order_id)
     .notNull(),
+
+  // 'shipping' | 'billing' (or whatever you want)
+  type: varchar('type', { length: 20 }).notNull(),
 
   name: text('name'),
   phone: text('phone'),
@@ -28,12 +33,15 @@ export const user_addresses = pgTable('user_addresses', {
   }),
 });
 
-export const user_addressesRelations = relations(user_addresses, ({ one }) => ({
-  user: one(users, {
-    fields: [user_addresses.user_id],
-    references: [users.user_id],
+export const order_addressesRelations = relations(
+  order_addresses,
+  ({ one }) => ({
+    order: one(orders, {
+      fields: [order_addresses.order_id],
+      references: [orders.order_id],
+    }),
   }),
-}));
+);
 
-export type UserAddress = InferSelectModel<typeof user_addresses>;
-export type NewUserAddress = InferInsertModel<typeof user_addresses>;
+export type OrderAddress = InferSelectModel<typeof order_addresses>;
+export type NewOrderAddress = InferInsertModel<typeof order_addresses>;
