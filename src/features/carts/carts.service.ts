@@ -111,6 +111,9 @@ export class CartsService {
               columns: {
                 product_name: true,
               },
+              with: {
+                supplier: true,
+              },
             },
           },
         },
@@ -142,6 +145,9 @@ export class CartsService {
             product: {
               columns: {
                 product_name: true,
+              },
+              with: {
+                supplier: true,
               },
             },
           },
