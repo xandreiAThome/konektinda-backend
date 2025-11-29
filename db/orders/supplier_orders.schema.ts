@@ -3,6 +3,7 @@ import { suppliers } from '../suppliers/suppliers.schema';
 import { orders } from './orders.schema';
 import { orderStatuses } from '../enums';
 import { InferInsertModel, InferSelectModel, relations } from 'drizzle-orm';
+import { shipments } from 'db/schema';
 
 export const supplier_orders = pgTable('supplier_orders', {
   supplier_order_id: integer('supplier_order_id')
@@ -46,6 +47,7 @@ export const supplier_ordersRelations = relations(
       fields: [supplier_orders.supplier_id],
       references: [suppliers.supplier_id],
     }),
+    shipments: one(shipments),
   }),
 );
 
