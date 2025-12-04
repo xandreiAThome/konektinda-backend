@@ -1,59 +1,50 @@
-import { IsString, IsOptional, MaxLength } from 'class-validator';
+import { IsString, IsOptional } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateUserAddressDto {
+  // region
   @ApiPropertyOptional({
-    description: 'Region of the address',
+    description: 'Region Name',
     example: 'NCR',
-    maxLength: 50,
     type: String,
   })
   @IsOptional()
   @IsString()
-  @MaxLength(50)
   region?: string;
 
+  // province
   @ApiPropertyOptional({
-    description: 'Province of the address',
+    description: 'State or province',
     example: 'Metro Manila',
-    maxLength: 50,
-    type: String,
   })
   @IsOptional()
   @IsString()
-  @MaxLength(50)
   province?: string;
 
+  // city
   @ApiPropertyOptional({
-    description: 'City of the address',
-    example: 'Quezon City',
-    maxLength: 50,
-    type: String,
+    description: 'City name',
+    example: 'Makati City',
   })
   @IsOptional()
   @IsString()
-  @MaxLength(50)
   city?: string;
 
+  // barangay
   @ApiPropertyOptional({
-    description: 'Barangay of the address',
-    example: 'Commonwealth',
-    maxLength: 50,
-    type: String,
+    description: 'Barangay name',
+    example: 'Bel-Air',
   })
   @IsOptional()
   @IsString()
-  @MaxLength(50)
   barangay?: string;
 
+  // zip_code
   @ApiPropertyOptional({
-    description: 'Zip code of the address',
+    description: 'Zip code',
     example: '1121',
-    maxLength: 10,
-    type: String,
   })
   @IsOptional()
   @IsString()
-  @MaxLength(10)
   zip_code?: string;
 }

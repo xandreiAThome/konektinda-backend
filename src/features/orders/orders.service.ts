@@ -198,11 +198,6 @@ export class OrdersService {
         .values({
           user_id: dto.user_id,
           grand_total: computedGrandTotal,
-          region: dto.region,
-          province: dto.province,
-          city: dto.city,
-          barangay: dto.barangay,
-          zip_code: dto.zip_code,
           payment_id: dto.payment_id,
         })
         .returning({ order_id: orders.order_id });
