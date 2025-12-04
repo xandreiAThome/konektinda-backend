@@ -1,4 +1,4 @@
-import { integer, varchar, text, pgTable } from 'drizzle-orm/pg-core';
+import { integer, varchar, pgTable } from 'drizzle-orm/pg-core';
 import { users } from './users.schema';
 import { InferInsertModel, InferSelectModel, relations } from 'drizzle-orm';
 
@@ -9,23 +9,11 @@ export const user_addresses = pgTable('user_addresses', {
     .references(() => users.user_id)
     .notNull(),
 
-  name: text('name'),
-  phone: text('phone'),
-  email: text('email'),
-  company_name: text('company_name'),
-
-  address_line1: text('address_line1').notNull(),
-  address_line2: text('address_line2'),
-  address_line3: text('address_line3'),
-
-  city_locality: text('city_locality').notNull(),
-  state_province: text('state_province').notNull(),
-  postal_code: text('postal_code'),
-
-  country_code: varchar('country_code', { length: 2 }).notNull(),
-  address_residential_indicator: varchar('address_residential_indicator', {
-    length: 7,
-  }),
+  region: varchar('region', { length: 50 }).notNull(),
+  province: varchar('province', { length: 50 }).notNull(),
+  city: varchar('city', { length: 50 }).notNull(),
+  barangay: varchar('barangay', { length: 50 }).notNull(),
+  zip_code: varchar('zip_code', { length: 10 }).notNull(),
 });
 
 export const user_addressesRelations = relations(user_addresses, ({ one }) => ({

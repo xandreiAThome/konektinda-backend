@@ -41,20 +41,79 @@ export class UserAddressController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create a new address',
-    description: 'Creates a new address for a user',
+    description:
+      'Creates a new address for a user. Provide user_id, region (e.g., NCR), province (e.g., Metro Manila), city (e.g., Makati City), barangay (e.g., Bel-Air), and zip_code (e.g., 1121).',
   })
-  @ApiBody({ type: CreateUserAddressDto })
+  @ApiBody({
+    type: CreateUserAddressDto,
+    examples: {
+      example1: {
+        summary: 'Sample Address',
+        value: {
+          user_id: 1,
+          region: 'NCR',
+          province: 'Metro Manila',
+          city: 'Makati City',
+          barangay: 'Bel-Air',
+          zip_code: '1121',
+        },
+      },
+    },
+  })
   @ApiResponse({
     status: 201,
     description: 'Address successfully created',
+    schema: {
+      example: {
+        address_id: 1,
+        user_id: 1,
+        region: 'NCR',
+        province: 'Metro Manila',
+        city: 'Makati City',
+        barangay: 'Bel-Air',
+        zip_code: '1121',
+      },
+    },
   })
   @ApiResponse({
     status: 400,
-    description: 'Invalid input data',
+    description:
+      'Invalid input data - Ensure all required fields are provided: user_id (number), region (string), province (string), city (string), barangay (string), zip_code (string). Do not include extra fields.',
+    schema: {
+      example: {
+        message: [
+          'user_id must be an integer number',
+          'user_id should not be empty',
+          'region must be a string',
+          'region should not be empty',
+        ],
+        error: 'Bad Request',
+        statusCode: 400,
+      },
+    },
   })
   @ApiResponse({
     status: 401,
-    description: 'Unauthorized - Invalid or missing Firebase token',
+    description:
+      'Unauthorized - You must provide a valid Firebase Bearer token in the Authorization header',
+    schema: {
+      example: {
+        message: 'Unauthorized',
+        statusCode: 401,
+      },
+    },
+  })
+  @ApiResponse({
+    status: 500,
+    description:
+      'Foreign key constraint violation - The user_id does not exist in the users table. Make sure to use a valid user_id from an existing user.',
+    schema: {
+      example: {
+        message:
+          'insert or update on table "user_addresses" violates foreign key constraint',
+        statusCode: 500,
+      },
+    },
   })
   async createAddress(@Body() dto: CreateUserAddressDto) {
     return this.userAddressService.create(dto);

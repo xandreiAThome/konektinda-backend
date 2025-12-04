@@ -1,7 +1,8 @@
-import { IsString, IsInt, MaxLength, IsNotEmpty } from 'class-validator';
+import { IsString, IsInt, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateUserAddressDto {
+  // user_id
   @ApiProperty({
     description: 'The ID of the user',
     example: 1,
@@ -11,58 +12,49 @@ export class CreateUserAddressDto {
   @IsNotEmpty()
   user_id: number;
 
+  // region
   @ApiProperty({
-    description: 'Region of the address',
+    description: 'Region Name',
     example: 'NCR',
-    maxLength: 50,
     type: String,
   })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(50)
   region: string;
 
+  // province
   @ApiProperty({
-    description: 'Province of the address',
+    description: 'State or province',
     example: 'Metro Manila',
-    maxLength: 50,
-    type: String,
   })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(50)
   province: string;
 
+  // city
   @ApiProperty({
-    description: 'City of the address',
-    example: 'Quezon City',
-    maxLength: 50,
-    type: String,
+    description: 'City name',
+    example: 'Makati City',
   })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(50)
   city: string;
 
+  // barangay
   @ApiProperty({
-    description: 'Barangay of the address',
-    example: 'Commonwealth',
-    maxLength: 50,
-    type: String,
+    description: 'Barangay name',
+    example: 'Bel-Air',
   })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(50)
   barangay: string;
 
+  // zip_code
   @ApiProperty({
-    description: 'Zip code of the address',
+    description: 'Zip code',
     example: '1121',
-    maxLength: 10,
-    type: String,
   })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(10)
   zip_code: string;
 }

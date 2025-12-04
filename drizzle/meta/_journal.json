@@ -15,6 +15,13 @@
       "when": 1763957612677,
       "tag": "0001_thankful_black_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1764886291919,
+      "tag": "0002_peaceful_weapon_omega",
+      "breakpoints": true
     }
   ]
 }
