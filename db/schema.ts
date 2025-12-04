@@ -1,6 +1,5 @@
 export * from './carts/cart_items.schema';
 export * from './carts/carts.schema';
-export * from './couriers/couriers.schema';
 export * from './orders/order_items.schema';
 export * from './orders/orders.schema';
 export * from './payments/payments.schema';
